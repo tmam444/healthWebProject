@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+      layout:decorate="~{layout/layout}"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div layout:fragment="content_body">
+    This is Admin Page!!
+
+    <div sec:authorize="isAnonymous()">
+        You are Anonymous
+    </div>
+
+    <div sec:authorize="isAuthenticated()">
+        You was login
+    </div>
+
+    <div sec:authentication="name">User Name</div>
+    <div sec:authorize="hasAnyRole('ADMIN')">Are you Admin?!</div>
+    <div sec:authorize="hasAnyRole('USER')">Are you User?!</div>
+
+</div>
+
+</body>
+</html>

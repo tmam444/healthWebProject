@@ -21,15 +21,18 @@
         <input type="submit">
     </form>
     <hr>
-    <div th:each="member : ${list}">
+    <div th:each="member : ${list.content}">
         유저 이름 : <span th:text="${member.username}"></span><br>
         유저 비밀번호 : <span th:text="${member.password}"></span>
     </div>
 
-<!--    <th:block th:if="${member != null}">-->
-<!--        유저 이름 : <span th:text="${member.username}"></span><br>-->
-<!--        유저 비밀번호 : <span th:text="${member.password}"></span>-->
-<!--    </th:block>-->
+    <nav>
+        <ul th:with="start=1,end=${list.getTotalPages() == 0} ? 1 : ${list.getTotalPages()}">
+            <li th:each="page: ${#numbers.sequence(start, end)}" th:class="${page == list.number + 1} ? 'active'">
+                <a th:text="${page}" th:href="@{/member(page=${page})}"></a>
+            </li>
+        </ul>
+    </nav>
 
 </div>
 </body>
