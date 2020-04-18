@@ -16,6 +16,16 @@ public class Example {
         return "index";
     }
 
+    @GetMapping("/main")
+    String main(){
+        return "main";
+    }
+
+    @GetMapping("/mainTest")
+    String mainTest(){
+        return "mainTest";
+    }
+
     @ResponseBody
     @RequestMapping("/test")
     String test(){
