@@ -1,6 +1,6 @@
 package com.healthchang.demo.service;
 
-import com.healthchang.demo.domain.Member;
+import com.healthchang.demo.domain.MemberTable;
 import com.healthchang.demo.domain.MemberAuthority;
 import com.healthchang.demo.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -27,36 +28,30 @@ public class MemberService implements UserDetailsService {
     @Autowired
     PasswordEncoder encoder;
 
-    public List<Member> findAll() {
+    public List<MemberTable> findAll() {
         return repository.findAll();
     }
 
-    public Member save(Member member) {
-        HashSet<MemberAuthority> a = new HashSet<>();
-        a.add(MemberAuthority.USER);
-        if(member.getUsername().equals("arahansa@naver.com"))
-            a.add(MemberAuthority.ADMIN);
-        member.setAuthoritySet(a);
-        member.setPassword(encoder.encode(member.getPassword()));
-        return repository.save(member);
-    }
-
-    public void createDummy() {
-        for (int i = 0; i<200; i++){
-            Member member = new Member();
-            member.setUsername(i + "@naver.com");
-            member.setPassword(i + "번째 비밀번호");
-            save(member);
+    public MemberTable save(MemberTable member) {
+        MemberTable memberTable = repository.findByUsername(member.getUsername()).orElse(null);
+        if(memberTable == null){
+            HashSet<MemberAuthority> a = new HashSet<>();
+            a.add(MemberAuthority.USER);
+            member.setAuthoritySet(a);
+            member.setPassword(encoder.encode(member.getPassword()));
+            return repository.save(member);
+        }else{
+            return null;
         }
     }
 
-    public Page<Member> findAll(Pageable pageable) {
-        Page<Member> all = repository.findAll(pageable);
+    public Page<MemberTable> findAll(Pageable pageable) {
+        Page<MemberTable> all = repository.findAll(pageable);
         return all;
     }
 
     static class UserDetailImpl extends User{
-        public UserDetailImpl(Member m){
+        public UserDetailImpl(MemberTable m){
             super(m.getUsername(), m.getPassword(), m.getAuthoritySet());
         }
     }
@@ -67,4 +62,13 @@ public class MemberService implements UserDetailsService {
         .map(UserDetailImpl::new)
         .orElseThrow(()-> new UsernameNotFoundException(username));
     }
+
+    public boolean checkDuplicationId(String id){
+        MemberTable memberTable = repository.findByUsername(id).orElse(null);
+        if(memberTable == null){
+            return true;
+        }
+        return false;
+    }
+
 }

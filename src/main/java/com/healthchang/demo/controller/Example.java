@@ -1,5 +1,6 @@
 package com.healthchang.demo.controller;
 
+import com.healthchang.demo.domain.MemberTable;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,23 +14,18 @@ public class Example {
     @GetMapping("/")
     String home(String name, Model model) {
         model.addAttribute("name", name);
-        return "index";
+        return "main";
+    }
+
+    @GetMapping("/join")
+    public String join(Model model){
+        model.addAttribute("member", new MemberTable());
+        return "register";
     }
 
     @GetMapping("/main")
     String main(){
         return "main";
-    }
-
-    @GetMapping("/mainTest")
-    String mainTest(){
-        return "mainTest";
-    }
-
-    @ResponseBody
-    @RequestMapping("/test")
-    String test(){
-        return "Test!!";
     }
 
 }

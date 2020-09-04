@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+    <link rel="stylesheet" th:href="@{/css/bootstrap-datepicker.css}">
+    <script th:src="@{/js/bootstrap-datepicker.js}"></script>
+    <script th:src="@{/locales/bootstrap-datepicker.kr.min.js}"></script>
+</head>
+
+<body>
+<div class="container" layout:fragment="content_body">
+    <div class="row">
+        <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+            <div class="card card-signin my-5">
+                <div class="card-body">
+                    <h5 class="card-title text-center">회원가입</h5>
+                    <form class="form-signin" action="/member/sendJoin" method="post" th:object="${member}" name="registerForm">
+                        <div class="form-label-group">
+                            <input type="email" id="username" name="username" class="form-control" placeholder="이메일 주소" th:field="*{username}" required
+                                   autofocus>
+                            <label for="username">이메일 주소 <span id="idCheckMsg">가입된 이메일입니다.</span></label>
+                        </div>
+
+                        <div class="form-label-group">
+                            <input type="password" id="password" name="password" class="form-control" placeholder="비밀번호" th:field="*{password}" required minlength="7">
+                            <label for="password">비밀번호</label>
+                        </div>
+
+                        <div class="form-label-group">
+                            <input type="text" id="name" name="name" class="form-control" placeholder="이름" th:field="*{name}" required>
+                            <label for="name">이름</label>
+                        </div>
+
+                        <div class="form-label-group">
+                            <input type="date" class="form-control" placeholder="생년월일" id="date" name="date" th:field="*{date}" required>
+                            <label for="date">생년월일</label>
+                        </div>
+
+                        <div>
+                            <span id="errorMsg" th:text="${msg}"></span>
+                        </div>
+                        <hr class="my-4">
+                        <button class="btn btn-lg btn-success btn-block text-uppercase" type="button" onclick="checkInfo()">회원가입</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+
+<script>
+    //datepicker 설정
+    $(function () {
+        $('#date').datepicker({
+            format: "yyyy-mm-dd",
+            autoclose : true,	//사용자가 날짜를 클릭하면 자동 캘린더가 닫히는 옵션
+            calendarWeeks : false, //캘린더 옆에 몇 주차인지 보여주는 옵션 기본값 false 보여주려면 true
+            clearBtn : false, //날짜 선택한 값 초기화 해주는 버튼 보여주는 옵션 기본값 false 보여주려면 true
+            disableTouchKeyboard : false,	//모바일에서 플러그인 작동 여부 기본값 false 가 작동 true가 작동 안함.
+            immediateUpdates: false,	//사용자가 보는 화면으로 바로바로 날짜를 변경할지 여부 기본값 :false
+            templates : {
+                leftArrow: '&laquo;',
+                rightArrow: '&raquo;'
+            }, //다음달 이전달로 넘어가는 화살표 모양 커스텀 마이징
+            showWeekDays : true ,// 위에 요일 보여주는 옵션 기본값 : true
+            todayHighlight : true ,	//오늘 날짜에 하이라이팅 기능 기본값 :false
+            toggleActive : true,	//이미 선택된 날짜 선택하면 기본값 : false인경우 그대로 유지 true인 경우 날짜 삭제
+            weekStart : 0 ,//달력 시작 요일 선택하는 것 기본값은 0인 일요일
+            language : "kr"	//달력의 언어 선택, 그에 맞는 js로 교체해줘야한다.
+        });
+
+        $('#date').datepicker().on('changeDate', function (){
+            const nowDate = new Date();
+            let selectDate = new Date($('#date').datepicker('getDate'));
+            if(selectDate > nowDate){
+                alert('오늘 이후로는 선택할 수 없습니다.');
+                $('#date').datepicker('clearDates');
+            }
+        });
+    });
+
+    // 회원가입 버튼 확인
+    function checkInfo(){
+        const isValidUsername = document.getElementById('username').checkValidity();
+        const isValidPassword = document.getElementById('password').checkValidity();
+        const isValidName = document.getElementById('name').checkValidity();
+        const isValidDate = document.getElementById('date').checkValidity();
+        let registerForm = document.registerForm;
+
+        if(!isValidUsername) document.getElementById('username').reportValidity();
+        else if(!chkInfo) document.getElementById('username').focus();
+        else if(!isValidPassword) document.getElementById('password').reportValidity();
+        else if(!isValidName) document.getElementById('name').reportValidity();
+        else if(!isValidDate) document.getElementById('date').reportValidity();
+
+        if(chkInfo && isValidUsername && isValidPassword && isValidName && isValidDate){
+            registerForm.submit();
+        }
+    }
+
+    //초기 실행 메소
+    function init(){
+        chkInfo = false;
+        let idCheckMsg = document.getElementById('idCheckMsg'); // 이메일 중복여부 메세지
+        // ID 중복 처리하기
+        let username = document.getElementById('username'); // 이메일 input 태그
+        username.onkeyup = function (){
+            $.ajax({
+                url: '/checkId',
+                data: {id: username.value },
+                success: function (result){
+                    if(result == true){
+                        $(idCheckMsg).hide();
+                        chkInfo = true;
+                    }else{
+                        $(idCheckMsg).show();
+                        chkInfo = false;
+                    }
+                },
+                error: function (request, status, error){
+                    console.log(`${request.responseText}, ${status}, ${error}`);
+                }
+            });
+        };
+    }
+
+    init();
+
+</script>
