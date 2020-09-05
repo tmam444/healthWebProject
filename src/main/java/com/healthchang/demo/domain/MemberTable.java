@@ -1,15 +1,11 @@
 package com.healthchang.demo.domain;
 
-import lombok.Builder;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.UniqueElements;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
 import java.sql.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -23,7 +19,6 @@ public class MemberTable{
     private Long id;
 
     @Length(min = 2)
-    @Length(max = 20)
     @Email
     @Column(unique = true)
     @NotBlank

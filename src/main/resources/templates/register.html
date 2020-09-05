@@ -11,11 +11,14 @@
     <script th:src="@{/js/bootstrap-datepicker.js}"></script>
     <script th:src="@{/locales/bootstrap-datepicker.kr.min.js}"></script>
 </head>
+<style>
+    .container > div { }
+</style>
 
 <body>
 <div class="container" layout:fragment="content_body">
-    <div class="row">
-        <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+    <div class="row mt-4" style="height: 100%">
+        <div class="col-sm-9 col-md-7 col-lg-5 mx-auto" style="height: 100%">
             <div class="card card-signin my-5">
                 <div class="card-body">
                     <h5 class="card-title text-center">회원가입</h5>

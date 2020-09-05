@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
     <head>
         <meta charset="UTF-8">
         <title>Main Page</title>
@@ -9,23 +10,13 @@
         <script th:src="@{/webjars/jquery/3.0.0/jquery.js}"></script>
         <script th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.js}"></script>
         <style>
-            .carousel-inner > div {
-                width: 1200px;
-                height: 600px;
-            }
-
-            footer {
-                position: fixed;
-                height: 100px;
-                bottom: 0;
-                width: 100%;
-            }
-
-            #logoImage1 {
-                width: 100px;
-                height: 100px;
-                border-radius: 50%;
-            }
+            header { height: 19.5% }
+            header > nav:first-child { height: 70% }
+            header > nav:last-child { height: 30% }
+            body > .container { height: auto; }
+            footer { height: 9% }
+            .carousel-inner > div { width: 1200px; height: 600px;}
+            #logoImage1 { width: 100px; height: 100px; border-radius: 50%;}
         </style>
     </head>
     <body>
@@ -57,7 +48,18 @@
                         <a class="nav-link text-white" href="#">운동 시설 정보</a>
                     </li>
                     <li class="nav-item mr-5"></li>
-                    <li class="nav-item">
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <a class="nav-link text-white" href="/logout">
+                            <svg class="bi bi-lock" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd"
+                                      d="M11.5 8h-7a1 1 0 00-1 1v5a1 1 0 001 1h7a1 1 0 001-1V9a1 1 0 00-1-1zm-7-1a2 2 0 00-2 2v5a2 2 0 002 2h7a2 2 0 002-2V9a2 2 0 00-2-2h-7zm0-3a3.5 3.5 0 117 0v3h-1V4a2.5 2.5 0 00-5 0v3h-1V4z"
+                                      clip-rule="evenodd"/>
+                            </svg>
+                            로그아웃
+                        </a>
+                    </li>
+                    <li class="nav-item" sec:authorize="isAnonymous()">
                         <a class="nav-link text-white" href="/login">
                             <svg class="bi bi-lock" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor"
                                  xmlns="http://www.w3.org/2000/svg">
@@ -113,7 +115,7 @@
                 </a>
             </div>
         </div>
-        <footer class="footer text-center py-3" layout:fragment="footer">
+        <footer class="footer text-center mt-3" layout:fragment="footer">
             2020 Copyright : Lee Chung Ryeol
         </footer>
 

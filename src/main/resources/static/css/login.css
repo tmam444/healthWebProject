@@ -1,4 +1,4 @@
-.row{ margin-top: 100px; }
+html, body { height: 100%; width: 100%; margin: 0; }
 
 :root { --input-padding-x: 1.5rem; --input-padding-y: .75rem; }
 
