@@ -11,4 +11,9 @@ public class LoginController {
         return "login";
     }
 
+    @GetMapping("/loginPage")
+    public String loginForm(){
+        return "login";
+    }
+
 }

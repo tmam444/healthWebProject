@@ -1,6 +1,9 @@
 package com.healthchang.demo.config;
 
+import com.healthchang.demo.config.auth.CustomOAuth2UserService;
+import com.healthchang.demo.domain.user.Role;
 import com.healthchang.demo.service.MemberService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -11,8 +14,11 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+@RequiredArgsConstructor
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private final CustomOAuth2UserService customOAuth2UserService;
 
     @Autowired
     private MemberService memberService;
@@ -34,12 +40,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable();
+        http.csrf().disable().headers().frameOptions().disable();
 
         http.authorizeRequests()
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/usersample").authenticated()
-                .antMatchers("/css/**", "/login", "/board", "/member").permitAll();
+                .antMatchers("/", "/css/**", "/login", "/board", "/member", "/js/**", "/h2-console/**").permitAll()
+                .antMatchers("/api/v1/**").hasRole(Role.USER.name());
+//                .anyRequest().authenticated();
 
         http.formLogin()
                 .loginPage("/login")
@@ -47,6 +55,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll();
 
         http.logout().deleteCookies("JSESSIONID").logoutUrl("/logout").logoutSuccessUrl("/");
-    }
 
+
+        http.oauth2Login().userInfoEndpoint().userService(customOAuth2UserService);
+    }
 }

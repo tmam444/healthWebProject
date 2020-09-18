@@ -91,6 +91,16 @@ html, body { height: 100%; width: 100%; margin: 0; }
     background-color: #3b5998;
 }
 
+.btn-naver {
+    color : white;
+    background-color: #2DB400;
+}
+
+.btn-kakao{
+    color: white;
+    background-color: #fcd411;
+}
+
 #idCheckMsg {
     color: red; float:right; display: none;
 }

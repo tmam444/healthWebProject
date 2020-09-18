@@ -1,6 +1,8 @@
 package com.healthchang.demo.domain;
 
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
@@ -12,6 +14,7 @@ import java.util.Set;
 
 @Data
 @Entity
+@NoArgsConstructor
 public class MemberTable{
 
     @Id
@@ -36,5 +39,19 @@ public class MemberTable{
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<MemberAuthority> authoritySet = new HashSet<>();
+
+    @Builder
+    public MemberTable (String username, String name, String password,Set<MemberAuthority> authoritySet){
+        this.username = username;
+        this.name = name;
+        this.password = password;
+        this.authoritySet = authoritySet;
+    }
+
+    public MemberTable update(String name, String email){
+        this.name = name;
+        this.username = email;
+        return this;
+    }
 
 }

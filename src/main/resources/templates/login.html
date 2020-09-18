@@ -7,6 +7,8 @@
     <meta charset="UTF-8">
     <title>로그인</title>
     <link rel="stylesheet" th:href="@{css/login.css}">
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="https://kit.fontawesome.com/d973d9e148.js" crossorigin="anonymous"></script>
 </head>
 <body>
 
@@ -16,7 +18,7 @@
             <div class="card card-signin my-2">
                 <div class="card-body">
                     <h5 class="card-title text-center">로그인</h5>
-                    <form class="form-signin" method="post">
+                    <form class="form-signin" method="post" action="/login">
                         <div class="form-label-group">
                             <input type="email" name="username" id="username" class="form-control" placeholder="Email address" required autofocus>
                             <label for="username">이메일 주소</label>
@@ -26,22 +28,26 @@
                             <input type="password" name="password" id="password" class="form-control" placeholder="Password" required>
                             <label for="password">비밀번호</label>
                         </div>
-
-                        <div class="custom-control custom-checkbox mb-3">
-                            <input type="checkbox" class="custom-control-input" id="customCheck1">
-                            <label class="custom-control-label" for="customCheck1">패스워드 저장</label>
-                        </div>
+                        <br>
                         <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">로그인</button>
                         <a class="btn btn-lg btn-success btn-block text-uppercase" href="/join">회원가입</a>
                         <hr class="my-4">
-                        <button class="btn btn-lg btn-google btn-block text-uppercase" type="submit"><i class="fab fa-google mr-2"></i>Google로 로그인 하기</button>
-                        <button class="btn btn-lg btn-facebook btn-block text-uppercase" type="submit"><i class="fab fa-facebook-f mr-2"></i>Facebook으로 로그인 하기</button>
+                        <a class="btn btn-lg btn-google btn-block text-uppercase" href="/oauth2/authorization/google"><i class="fab fa-google mr-2"></i>Google로 로그인 하기</a>
+                        <a class="btn btn-lg btn-naver btn-block text-uppercase" href="/oauth2/authorization/naver" role="button">
+                            <img class="fab mr-2" src="/images/naverIcon.png" width="20px">Naver로 로그인 하기
+                        </a>
+                        <!--                        <a class="btn btn-lg btn-kakao btn-block text-uppercase" href="/oauth2/authorization/kakao">-->
+<!--                            <img class="fab mr-2" src="/images/kakaoIcon.png" width="20px">Kakao로 로그인 하기-->
+<!--                        </a>-->
+                        <a class="btn btn-lg btn-kakao btn-block text-uppercase" href="https://kauth.kakao.com/oauth/authorize?client_id=2c1e6cc30a132b4647e201a908fa932c&redirect_uri=http://127.0.0.1:8080/login/oauth2/code/kakao
+&response_type=code">
+                            <img class="fab mr-2" src="/images/kakaoIcon.png" width="20px">Kakao로 로그인 하기
+                        </a>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
 </body>
 </html>
