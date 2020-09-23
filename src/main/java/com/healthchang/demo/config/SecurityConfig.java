@@ -49,6 +49,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/v1/**").hasRole(Role.USER.name());
 //                .anyRequest().authenticated();
 
+        http.authorizeRequests()
+                .antMatchers("/oauth2/**").permitAll()
+                .and()
+                .oauth2Login();
+
         http.formLogin()
                 .loginPage("/login")
                 .defaultSuccessUrl("/")
@@ -56,7 +61,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.logout().deleteCookies("JSESSIONID").logoutUrl("/logout").logoutSuccessUrl("/");
 
-
         http.oauth2Login().userInfoEndpoint().userService(customOAuth2UserService);
     }
+
 }
