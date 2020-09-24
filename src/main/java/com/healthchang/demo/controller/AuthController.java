@@ -26,6 +26,7 @@ public class AuthController {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final HttpSession httpSession;
 
+
     public AuthController(CustomOAuth2UserService customOAuth2UserService, HttpSession httpSession) {
         this.customOAuth2UserService = customOAuth2UserService;
         this.httpSession = httpSession;
