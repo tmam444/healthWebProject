@@ -8,12 +8,10 @@ import com.healthchang.demo.config.auth.dto.OAuthAttributes;
 import com.healthchang.demo.config.auth.dto.OAuthToken;
 import com.healthchang.demo.config.auth.dto.SessionUser;
 import com.healthchang.demo.domain.user.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -114,6 +112,6 @@ public class AuthController {
         User user = customOAuth2UserService.saveOrUpdate(attributes);
         httpSession.setAttribute("user", new SessionUser(user));
 
-        return "redirect:/main";
+        return "redirect:/";
     }
 }

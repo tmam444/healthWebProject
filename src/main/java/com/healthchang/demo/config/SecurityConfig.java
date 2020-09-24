@@ -25,7 +25,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(memberService);
+        auth.userDetailsService(memberService).passwordEncoder(passwordEncoder());
     }
 
     @Bean
@@ -55,7 +55,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .oauth2Login();
 
         http.formLogin()
-                .loginPage("/login")
+                .loginPage("/loginPage")
                 .defaultSuccessUrl("/")
                 .permitAll();
 
