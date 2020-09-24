@@ -1,4 +1,4 @@
-package com.healthchang.demo.config.auth;
+package com.healthchang.demo.config.auth.temp;
 
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;

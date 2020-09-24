@@ -2,10 +2,12 @@ package com.healthchang.demo.config.auth;
 
 import com.healthchang.demo.config.auth.dto.OAuthAttributes;
 import com.healthchang.demo.config.auth.dto.SessionUser;
-import com.healthchang.demo.domain.user.User;
-import com.healthchang.demo.repository.user.UserRepository;
+import com.healthchang.demo.domain.MemberTable;
+import com.healthchang.demo.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
@@ -21,8 +23,9 @@ import java.util.Collections;
 @Service
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
     private final HttpSession httpSession;
+    private PasswordEncoder encoder = new BCryptPasswordEncoder();
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -35,20 +38,25 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         OAuthAttributes attributes = OAuthAttributes.of(registrationId, userNameAttributeName, oAuth2User.getAttributes());
 
-        User user = saveOrUpdate(attributes);
+        MemberTable user = memberRepository.findByEmail(attributes.getEmail()).orElse(null);
+        if(user == null){
+            user = saveOrUpdate(attributes);
+        }
+
         httpSession.setAttribute("user", new SessionUser(user));
 
         return new DefaultOAuth2User(
-                Collections.singleton(new SimpleGrantedAuthority(user.getRoleKey())),
+                Collections.singleton(new SimpleGrantedAuthority(user.getAuthoritySet().toString())),
                 attributes.getAttributes(),
                 attributes.getNameAttributeKey()
         );
     }
 
-    public User saveOrUpdate(OAuthAttributes attributes){
-        User user = userRepository.findByEmail(attributes.getEmail())
-                                    .map(entity -> entity.update(attributes.getName(), attributes.getPicture()))
-                                    .orElse(attributes.toEntity());
-        return userRepository.save(user);
+    public MemberTable saveOrUpdate(OAuthAttributes attributes){
+        MemberTable user = memberRepository.findByEmail(attributes.getEmail())
+                                .map(entity -> entity.update(attributes.getName(), attributes.getPicture()))
+                                .orElse(attributes.toEntity());
+        user.setPassword(encoder.encode(user.getPassword()));
+        return memberRepository.save(user);
     }
 }

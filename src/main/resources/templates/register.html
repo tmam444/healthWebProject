@@ -24,7 +24,7 @@
                     <h5 class="card-title text-center">회원가입</h5>
                     <form class="form-signin" action="/member/sendJoin" method="post" th:object="${member}" name="registerForm">
                         <div class="form-label-group">
-                            <input type="email" id="username" name="username" class="form-control" placeholder="이메일 주소" th:field="*{username}" required
+                            <input type="email" id="username" name="username" class="form-control" placeholder="이메일 주소" th:field="*{email}" required
                                    autofocus>
                             <label for="username">이메일 주소 <span id="idCheckMsg">가입된 이메일입니다.</span></label>
                         </div>

@@ -3,14 +3,14 @@ package com.healthchang.demo.service;
 import com.healthchang.demo.domain.MemberAuthority;
 import com.healthchang.demo.domain.MemberTable;
 import com.healthchang.demo.repository.MemberRepository;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,22 +19,19 @@ import java.util.HashSet;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Transactional
 public class MemberService implements UserDetailsService {
 
-    @Autowired
-    private MemberRepository repository;
-
-    @Autowired
-    PasswordEncoder encoder;
+    private final MemberRepository repository;
+    private PasswordEncoder encoder = new BCryptPasswordEncoder();
 
     public List<MemberTable> findAll() {
         return repository.findAll();
     }
 
     public MemberTable save(MemberTable member) {
-        MemberTable memberTable = repository.findByUsername(member.getUsername()).orElse(null);
+        MemberTable memberTable = repository.findByEmail(member.getEmail()).orElse(null);
         if(memberTable == null){
             HashSet<MemberAuthority> a = new HashSet<>();
             a.add(MemberAuthority.USER);
@@ -53,19 +50,19 @@ public class MemberService implements UserDetailsService {
 
     static class UserDetailImpl extends User{
         public UserDetailImpl(MemberTable m){
-            super(m.getUsername(), m.getPassword(), m.getAuthoritySet());
+            super(m.getEmail(), m.getPassword(), m.getAuthoritySet());
         }
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return repository.findByUsername(username)
+        return repository.findByEmail(username)
         .map(UserDetailImpl::new)
         .orElseThrow(()-> new UsernameNotFoundException(username));
     }
 
     public boolean checkDuplicationId(String id){
-        MemberTable memberTable = repository.findByUsername(id).orElse(null);
+        MemberTable memberTable = repository.findByEmail(id).orElse(null);
         if(memberTable == null){
             return true;
         }

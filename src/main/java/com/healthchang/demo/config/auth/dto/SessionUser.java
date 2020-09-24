@@ -1,6 +1,6 @@
 package com.healthchang.demo.config.auth.dto;
 
-import com.healthchang.demo.domain.user.User;
+import com.healthchang.demo.domain.MemberTable;
 import lombok.Getter;
 
 import java.io.Serializable;
@@ -12,7 +12,7 @@ public class SessionUser implements Serializable {
     private String email;
     private String picture;
 
-    public SessionUser(User user){
+    public SessionUser(MemberTable user){
         this.name = user.getName();
         this.email = user.getEmail();
         this.picture = user.getPicture();

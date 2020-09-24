@@ -1,4 +1,4 @@
-package com.healthchang.demo.config.auth.dto;
+package com.healthchang.demo.config.auth.temp;
 
 import lombok.Data;
 

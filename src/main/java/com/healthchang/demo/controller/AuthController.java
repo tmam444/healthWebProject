@@ -3,11 +3,11 @@ package com.healthchang.demo.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.healthchang.demo.config.auth.CustomOAuth2UserService;
-import com.healthchang.demo.config.auth.dto.KakaoProfile;
+import com.healthchang.demo.config.auth.temp.KakaoProfile;
 import com.healthchang.demo.config.auth.dto.OAuthAttributes;
-import com.healthchang.demo.config.auth.dto.OAuthToken;
+import com.healthchang.demo.config.auth.temp.OAuthToken;
 import com.healthchang.demo.config.auth.dto.SessionUser;
-import com.healthchang.demo.domain.user.User;
+import com.healthchang.demo.domain.MemberTable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -110,7 +110,7 @@ public class AuthController {
                         .picture(kakaoProfile.properties.getProfile_image())
                         .build();
 
-        User user = customOAuth2UserService.saveOrUpdate(attributes);
+        MemberTable user = customOAuth2UserService.saveOrUpdate(attributes);
         httpSession.setAttribute("user", new SessionUser(user));
 
         return "redirect:/";

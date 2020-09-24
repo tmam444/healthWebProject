@@ -3,6 +3,7 @@ package com.healthchang.demo.domain;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
@@ -25,15 +26,17 @@ public class MemberTable{
     @Email
     @Column(unique = true)
     @NotBlank
-    private String username;
+    private String email;
 
     @Length(min = 7)
     @NotBlank
     private String password;
 
-    @NotBlank
     private String name;
-    
+
+    private String picture;
+
+    @CreationTimestamp
     private Date date;
 
     @Enumerated(EnumType.STRING)
@@ -41,16 +44,18 @@ public class MemberTable{
     private Set<MemberAuthority> authoritySet = new HashSet<>();
 
     @Builder
-    public MemberTable (String username, String name, String password,Set<MemberAuthority> authoritySet){
-        this.username = username;
+    public MemberTable (String email, String name, String password, String picture, Date date, Set<MemberAuthority> authoritySet){
+        this.email = email;
         this.name = name;
         this.password = password;
         this.authoritySet = authoritySet;
+        this.picture = picture;
+        this.date = date;
     }
 
     public MemberTable update(String name, String email){
         this.name = name;
-        this.username = email;
+        this.email = email;
         return this;
     }
 

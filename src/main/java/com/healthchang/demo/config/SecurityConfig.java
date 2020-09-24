@@ -4,7 +4,6 @@ import com.healthchang.demo.config.auth.CustomOAuth2UserService;
 import com.healthchang.demo.domain.user.Role;
 import com.healthchang.demo.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -19,9 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final CustomOAuth2UserService customOAuth2UserService;
-
-    @Autowired
-    private MemberService memberService;
+    private final MemberService memberService;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
