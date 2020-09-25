@@ -1,6 +1,7 @@
 package com.healthchang.demo.config;
 
 import com.healthchang.demo.config.auth.CustomOAuth2UserService;
+import com.healthchang.demo.config.handler.UserLoginFailHandler;
 import com.healthchang.demo.domain.user.Role;
 import com.healthchang.demo.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -41,10 +42,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
                 .antMatchers("/admin/**").hasRole("ADMIN")
-                .antMatchers("/usersample").authenticated()
-                .antMatchers("/", "/css/**", "/login", "/board", "/member", "/js/**", "/h2-console/**").permitAll()
-                .antMatchers("/api/v1/**").hasRole(Role.USER.name());
-//                .anyRequest().authenticated();
+                .antMatchers("/", "/css/**", "/board", "/member", "/js/**", "/h2-console/**").permitAll()
+                .antMatchers("/api/v1/**").hasRole(Role.USER.name())
+                .antMatchers("/login").hasRole(Role.ADMIN.name());
 
         http.authorizeRequests()
                 .antMatchers("/oauth2/**").permitAll()
@@ -54,11 +54,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.formLogin()
                 .loginPage("/loginPage")
                 .defaultSuccessUrl("/")
+                .failureHandler(new UserLoginFailHandler())
                 .permitAll();
 
         http.logout().deleteCookies("JSESSIONID").logoutUrl("/logout").logoutSuccessUrl("/");
 
         http.oauth2Login().userInfoEndpoint().userService(customOAuth2UserService);
     }
-
 }

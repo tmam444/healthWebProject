@@ -2,15 +2,85 @@
 <html lang="ko"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/main}">
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
     <meta charset="UTF-8">
-    <title>로그인</title>
+    <title>Main Page</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.css}">
+    <script th:src="@{/webjars/jquery/3.0.0/jquery.js}"></script>
+    <script th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.js}"></script>
     <link rel="stylesheet" th:href="@{css/login.css}">
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
     <script src="https://kit.fontawesome.com/d973d9e148.js" crossorigin="anonymous"></script>
+    <style>
+        header { height: 19.5% }
+        header > nav:first-child { height: 70% }
+        header > nav:last-child { height: 30% }
+        body > .container { height: auto; }
+        footer { height: 9% }
+        .carousel-inner > div { width: 1200px; height: 600px;}
+        #logoImage1 { width: 100px; height: 100px; border-radius: 50%;}
+    </style>
 </head>
 <body>
+<header layout:fragment="header">
+    <nav class="navbar navbar-expand-sm bg-light navbar-light">
+        <ul class="navbar-nav ml-auto mr-auto">
+            <a href="/main" class="navbar-brand">
+                <img id="logoImage1" th:src="@{/images/Logo/logo.png}">
+            </a>
+            <form class="form-inline">
+                <input class="form-control form-control-lg mr-sm-2" type="search" placeholder="검색하기"
+                       aria-label="Search">
+                <button class="btn btn-outline-success btn-lg" type="submit">검색</button>
+            </form>
+        </ul>
+    </nav>
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+        <ul class="navbar-nav ml-auto mr-auto">
+            <li class="nav-item">
+                <a class="nav-link text-white" href="#">운동 정보</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" href="#">음식 정보</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" href="#">헬스보충제 정보</a>
+            </li>
+            <li class="nav-item mr-5">
+                <a class="nav-link text-white" href="#">운동 시설 정보</a>
+            </li>
+            <li class="nav-item mr-5"></li>
+
+            <li class="nav-item">
+                <a class="nav-link text-white" href="/loginPage">
+                    <svg class="bi bi-lock" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                              d="M11.5 8h-7a1 1 0 00-1 1v5a1 1 0 001 1h7a1 1 0 001-1V9a1 1 0 00-1-1zm-7-1a2 2 0 00-2 2v5a2 2 0 002 2h7a2 2 0 002-2V9a2 2 0 00-2-2h-7zm0-3a3.5 3.5 0 117 0v3h-1V4a2.5 2.5 0 00-5 0v3h-1V4z"
+                              clip-rule="evenodd"/>
+                    </svg>
+                    로그인/가입
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link text-white" href="#">
+                    <svg class="bi bi-inbox" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                              d="M3.81 4.063A1.5 1.5 0 014.98 3.5h6.04a1.5 1.5 0 011.17.563l3.7 4.625a.5.5 0 01-.78.624l-3.7-4.624a.5.5 0 00-.39-.188H4.98a.5.5 0 00-.39.188L.89 9.312a.5.5 0 11-.78-.624l3.7-4.625z"
+                              clip-rule="evenodd"/>
+                        <path fill-rule="evenodd"
+                              d="M.125 8.67A.5.5 0 01.5 8.5H6a.5.5 0 01.5.5 1.5 1.5 0 003 0 .5.5 0 01.5-.5h5.5a.5.5 0 01.496.562l-.39 3.124a1.5 1.5 0 01-1.489 1.314H1.883a1.5 1.5 0 01-1.489-1.314l-.39-3.124a.5.5 0 01.121-.393zm.941.83l.32 2.562a.5.5 0 00.497.438h12.234a.5.5 0 00.496-.438l.32-2.562H10.45a2.5 2.5 0 01-4.9 0H1.066z"
+                              clip-rule="evenodd"/>
+                    </svg>
+                    장바구니
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
 
 <div class="container" layout:fragment="content_body">
     <div class="row mt-4" style="height: 100%">
@@ -28,7 +98,10 @@
                             <input type="password" name="password" id="password" class="form-control" placeholder="Password" required>
                             <label for="password">비밀번호</label>
                         </div>
-                        <br>
+                        <div>
+                            <span id="errorMsg" th:text="${#httpServletRequest.getAttribute('loginFailMsg')}"></span>
+                        </div>
+                        <hr class="my-4">
                         <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">로그인</button>
                         <a class="btn btn-lg btn-success btn-block text-uppercase" href="/join">회원가입</a>
                         <hr class="my-4">
@@ -36,9 +109,6 @@
                         <a class="btn btn-lg btn-naver btn-block text-uppercase" href="/oauth2/authorization/naver" role="button">
                             <img class="fab mr-2" src="/images/naverIcon.png" width="20px">Naver로 로그인 하기
                         </a>
-                        <!--                        <a class="btn btn-lg btn-kakao btn-block text-uppercase" href="/oauth2/authorization/kakao">-->
-<!--                            <img class="fab mr-2" src="/images/kakaoIcon.png" width="20px">Kakao로 로그인 하기-->
-<!--                        </a>-->
                         <a class="btn btn-lg btn-kakao btn-block text-uppercase" href="/oauth2/authorization/kakao">
                             <img class="fab mr-2" src="/images/kakaoIcon.png" width="20px">Kakao로 로그인 하기
                         </a>
@@ -48,5 +118,9 @@
         </div>
     </div>
 </div>
+<footer class="footer text-center mt-3" layout:fragment="footer">
+    2020 Copyright : Lee Chung Ryeol
+</footer>
+
 </body>
 </html>
