@@ -49,10 +49,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/oauth2/**").permitAll()
                 .and()
-                .oauth2Login();
+                .oauth2Login()
+                .loginPage("/login");
 
         http.formLogin()
-                .loginPage("/loginPage")
+                .loginPage("/login")
                 .defaultSuccessUrl("/")
                 .failureHandler(new UserLoginFailHandler())
                 .permitAll();

@@ -11,7 +11,7 @@ import java.security.Principal;
 @Slf4j
 public class LoginController {
 
-    @RequestMapping(value = "/loginPage", method = {RequestMethod.POST, RequestMethod.GET})
+    @RequestMapping(value = "/login", method = {RequestMethod.POST, RequestMethod.GET})
     public String loginForm2(Principal principal){
         if(principal != null){ // 로그인되어 있는 상태라면
             return "redirect:/";
