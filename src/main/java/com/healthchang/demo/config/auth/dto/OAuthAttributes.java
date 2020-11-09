@@ -7,8 +7,9 @@ import lombok.Getter;
 import lombok.ToString;
 
 import java.sql.Date;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @Getter
 @ToString
@@ -98,13 +99,17 @@ public class OAuthAttributes {
     }
 
     public MemberTable toEntity() {
+        Set<MemberAuthority> authoritySet = new HashSet<>();
+        authoritySet.add(MemberAuthority.USER);
+
         return MemberTable.builder()
                 .name(name)
                 .email(email)
                 .password(password)
                 .picture(picture)
                 .date(new Date(new java.util.Date().getTime()))
-                .authoritySet(Collections.singleton(MemberAuthority.GUEST))
+//                .authoritySet(Collections.singleton(MemberAuthority.USER))
+                .authoritySet(authoritySet)
                 .build();
     }
 

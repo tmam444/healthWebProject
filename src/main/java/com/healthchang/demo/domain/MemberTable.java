@@ -51,6 +51,7 @@ public class MemberTable{
         this.authoritySet = authoritySet;
         this.picture = picture;
         this.date = date;
+        this.authoritySet = authoritySet;
     }
 
     public MemberTable update(String name, String email){

@@ -2,10 +2,10 @@ package com.healthchang.demo.config.auth;
 
 import com.healthchang.demo.config.auth.dto.OAuthAttributes;
 import com.healthchang.demo.config.auth.dto.SessionUser;
+import com.healthchang.demo.domain.MemberAuthority;
 import com.healthchang.demo.domain.MemberTable;
 import com.healthchang.demo.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -17,7 +17,8 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
-import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @Service
@@ -45,8 +46,11 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         httpSession.setAttribute("user", new SessionUser(user));
 
+        Set<MemberAuthority> authoritySet = new HashSet<>();
+        authoritySet.add(MemberAuthority.USER);
+
         return new DefaultOAuth2User(
-                Collections.singleton(new SimpleGrantedAuthority(user.getAuthoritySet().toString())),
+                authoritySet,
                 attributes.getAttributes(),
                 attributes.getNameAttributeKey()
         );

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>검색하기</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+    <link rel="stylesheet" th:href="@{/css/bootstrap-datepicker.css}">
+    <script th:src="@{/js/bootstrap-datepicker.js}"></script>
+    <script th:src="@{/locales/bootstrap-datepicker.kr.min.js}"></script>
+
+    <script type="text/javascript"
+            src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=44nqrtoo36&submodules=panorama,geocoder,drawing,visualization"></script>
+    <script type="text/javascript">
+        var map = null;
+
+        function initMap(x, y) {
+            map = new naver.maps.Map(document.getElementById('mapObject'), {
+                center: new naver.maps.LatLng(x, y),
+                zoom: 11,
+                mapTypeControl: true,
+                zoomControlOptions: {
+                    style: naver.maps.ZoomControlStyle.SMALL,
+                    position: naver.maps.Position.TOP_RIGHT
+                },
+                zoomControl: true
+            });
+            var contentString = 'Test';
+            var marker = new naver.maps.Marker({
+                position: new naver.maps.LatLng(x, y),
+                title: contentString,
+                map: map
+            });
+        }
+    </script>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+
+        let placeName = /*[[${find}]]*/ 'default';
+        let pagingNum = /*[[${page}]]*/ 'default';
+
+        let placeList; // ajax로 넘어온 배열을 저장하는 변수
+        let pagingCount;
+        let allCount;
+
+        /*]]>*/
+    </script>
+
+    <script>
+        function infoChange(num) {
+            var healthInfo = document.querySelectorAll(".healthInfo > span");
+            healthInfo.forEach(e => $(e).empty());
+            $(healthInfo[0]).append(`자치구 : ${placeList[num].GU_NM}`);
+            $(healthInfo[1]).append(`분류 : ${placeList[num].TYPE_NM}`);
+            $(healthInfo[2]).append(`시설명 : ${placeList[num].NM}`);
+            $(healthInfo[3]).append(`주소 : ${placeList[num].ADDR}`);
+            $(healthInfo[4]).append(`전화번호 : ${placeList[num].TEL}`);
+            $(healthInfo[5]).append(`비고 : ${placeList[num].BIGO}`);
+            $(healthInfo[6]).append(`홈페이지 : <a href="${placeList[num].HOME_PAGE}">${placeList[num].HOME_PAGE}</a>`);
+            $(healthInfo[7]).append(`강습여부 : ${placeList[num].EDU_YN}`);
+            $(healthInfo[8]).append(`실내/실외 : ${placeList[num].IN_OUT}`);
+            $(healthInfo[9]).append(`주차여부 : ${placeList[num].PARKING_LOT}`);
+            initMap(placeList[num].YCODE, placeList[num].XCODE)
+        }
+
+        function findPlace(find, startCount) {
+            $.ajax({
+                url: `/apiTest?find=${find}&page=${startCount}`,
+                type: "GET",
+                cache: false,
+                dataType: "json",
+                data: "",
+                success: function (data) {
+                    allCount = data.list_total_count;
+                    pagingCount = Math.ceil(allCount / 15);
+                    placeList = data.row;
+                    infoChange(0);
+                    pagingWork();
+                    appendAllCount();
+                    var i = 0
+                    var list_group = document.querySelector('.list-group');
+
+                    data.row.forEach(element => {
+                        var li = `<li class="list-group-item">${element.NM} - ${element.TYPE_NM} - ${element.ADDR} <a type="button" onclick="infoChange(${i++})" class="btn-sm btn-primary float-right" href="#">상세보기</a></li>`;
+                        $(list_group).append(li);
+                    });
+                },
+                error: function (request, status, error) {
+                    var msg = "ERROR : " + request.status + "<br>";
+                    msg += "내용 : " + request.responseText + "<br>" + error;
+                    console.log(msg);
+                }
+            });
+        }
+
+        function pagingWork(){
+            var i = 0;
+            var pagingTag = $('#pagingTag');
+            for (i = 1; i <= pagingCount; i++){
+                if(i == pagingNum){
+                    var p = `<li class="page-item active"><a class="page-link" href="/search?find=${placeName}&page=${i}">${i}</a></li>`;
+                }else{
+                    var p = `<li class="page-item"><a class="page-link" href="/search?find=${placeName}&page=${i}">${i}</a></li>`;
+                }
+                pagingTag.append(p);
+            }
+        }
+
+        //총 갯수 추가시키기
+        function appendAllCount(){
+            $('#count').append(allCount);
+        }
+
+        $(function (){
+            //버튼 클릭시 이동
+            $('#placeBtn').click(function () {
+                var state = $('#selectBox option:selected').val();
+                location.replace(`/search?find=${state}`);
+            });
+
+            //자동으로 select하기
+            var select = $('#selectBox').find(`option[value=${placeName}]`);
+            $(select).attr('selected', 'selected');
+        })
+
+        findPlace(placeName, pagingNum);
+
+    </script>
+
+    <style>
+        .healthInfo > span {
+            display: block;
+            font-size: 18px;
+            padding-bottom: 10px;
+        }
+
+        .list-group > li {
+            line-height: 30px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container h-100 mb-4 h-auto" layout:fragment="content_body">
+    <div class="text-center">
+        <select id="selectBox" class="form-control w-auto d-inline-block mt-3">
+            <option value="강남구">강남구</option>
+            <option value="강동구">강동구</option>
+            <option value="강북구">강북구</option>
+            <option value="강서구">강서구</option>
+            <option value="관악구">관악구</option>
+            <option value="광진구">광진구</option>
+            <option value="구로구">구로구</option>
+            <option value="금천구">금천구</option>
+            <option value="노원구">노원구</option>
+            <option value="도봉구">도봉구</option>
+            <option value="동대문구">동대문구</option>
+            <option value="동작구">동작구</option>
+            <option value="마포구">마포구</option>
+            <option value="서대문구">서대문구</option>
+            <option value="서초구">서초구</option>
+            <option value="성동구">성동구</option>
+            <option value="성북구">성북구</option>
+            <option value="송파구">송파구</option>
+            <option value="양천구">양천구</option>
+            <option value="영등포구">영등포구</option>
+            <option value="용산구">용산구</option>
+            <option value="은평구">은평구</option>
+            <option value="종로구">종로구</option>
+            <option value="중구">중구</option>
+            <option value="중랑구">중랑구</option>
+        </select>
+        <button id="placeBtn" class="btn btn-info">이동</button>
+    </div>
+    <span id="count" class="text-right d-block mr-5">총 갯수 : </span>
+    <div class="row mt-4" style="height: auto">
+        <div class="col-sm-11 col-md-11 col-lg-11 mx-auto">
+            <div class="col-sm-6 col-md-6 col-lg-6 border h-100 float-left">
+                <div class="healthInfo mt-2">
+                    <span>자치구 : </span>
+                    <span>분류 : </span>
+                    <span>시설명 : </span>
+                    <span>주소 : </span>
+                    <span>전화번호 : </span>
+                    <span>홈페이지 : </span>
+                    <span>강습여부 : </span>
+                    <span>실내/실외 : </span>
+                    <span>주차장 : </span>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-6 col-lg-6 border h-100 float-right">
+                <div id='mapObject' style='width:100%;height:100%'></div>
+            </div>
+        </div>
+        <div class="col-sm-11 col-md-11 col-lg-11 mx-auto">
+            <ul class="list-group"></ul>
+
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center mt-3" id="pagingTag">
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>
+
