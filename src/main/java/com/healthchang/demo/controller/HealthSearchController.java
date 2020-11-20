@@ -8,11 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
 @Controller
 public class HealthSearchController {
 
@@ -24,27 +19,16 @@ public class HealthSearchController {
     }
 
     @ResponseBody
-    @GetMapping("/apiTest")
+    @GetMapping("/searchApi")
     public String searchHealth(@RequestParam(value = "page", defaultValue = "1") int page, @RequestParam(value = "find", defaultValue = "") String find){
         page = page != 0 ? page*15-14 : 1;
         int limitPage = page + 14;
         String urlstr = "http://openapi.seoul.go.kr:8088/747543646a746d6135335372684742/json/TbPublicSptCenter2019/" +  page + "/" + limitPage + "/" + find;
 
-        StringBuffer stringBuffer = new StringBuffer();
+        StringBuffer stringBuffer = CommonMethod.apiURLimport(urlstr, "GET");
         String returnMsg = "";
 
         try {
-            URL url = new URL(urlstr);
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setRequestMethod("GET");
-            BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"));
-            String returnLine;
-            while((returnLine = br.readLine()) != null){
-                stringBuffer.append(returnLine + "\n");
-            }
-            urlConnection.disconnect();
-            // ------
-
             JSONParser jsonParse = new JSONParser();
             //JSONParse에 json데이터를 넣어 파싱한 다음 JSONObject로 변환한다. JSONObject jsonObj = (JSONObject) jsonParse.parse(jsonData); //JSONObject에서 PersonsArray를 get하여 JSONArray에 저장한다. JSONArray personArray = (JSONArray) jsonObj.get("Persons");
             JSONObject jObject = (JSONObject) jsonParse.parse(stringBuffer.toString());

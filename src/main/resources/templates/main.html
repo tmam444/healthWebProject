@@ -6,9 +6,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Main Page</title>
-    <link rel="stylesheet" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.css}">
-    <script th:src="@{/webjars/jquery/3.0.0/jquery.js}"></script>
-    <script th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.js}"></script>
     <style>
         .carousel-inner > div {
             width: 1200px;
@@ -37,7 +34,7 @@
 </head>
 <body>
 <div class="container" layout:fragment="content_body">
-    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+    <div id="carouselExampleIndicators" class="carousel slide mt-lg-5" data-ride="carousel" style="min-height: 740px;">
         <ol class="carousel-indicators">
             <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
             <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>

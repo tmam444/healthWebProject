@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <meta charset="UTF-8">
+    <title>Food Page</title>
+    <style>
+        .carousel-inner > div {
+            width: 1200px;
+            height: 600px;
+        }
+
+        footer {
+            position: fixed;
+            height: 100px;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+
+    <script>
+        function test(){
+            $.ajax({
+                url: `/foodSearch?find=사과&page=1`,
+                type: "GET",
+                cache: false,
+                dataType: "text",
+                data: "",
+                success: function (data) {
+                    alert(data);
+                },
+                error: function (request, status, error) {
+                    var msg = "ERROR : " + request.status + "<br>";
+                    msg += "내용 : " + request.responseText + "<br>" + error;
+                    console.log(msg);
+                }
+            });
+        }
+        test();
+
+
+        // 검색하고 없으면, 사용자가 직접 추가, 없으면 사이트에서 추가 검색까지 가능하게끔 하기
+    </script>
+
+</head>
+<body>
+<div class="container" layout:fragment="content_body">
+
+    <div id="test"></div>
+
+</div>
+
+</body>
+</html>
