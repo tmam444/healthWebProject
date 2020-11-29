@@ -1,10 +1,10 @@
 package com.healthchang.demo.config.auth;
 
 import com.healthchang.demo.config.auth.dto.OAuthAttributes;
-import com.healthchang.demo.config.auth.dto.SessionUser;
-import com.healthchang.demo.domain.MemberAuthority;
-import com.healthchang.demo.domain.MemberTable;
-import com.healthchang.demo.repository.MemberRepository;
+import com.healthchang.demo.controller.CommonMethod;
+import com.healthchang.demo.domain.member.MemberAuthority;
+import com.healthchang.demo.domain.member.MemberTable;
+import com.healthchang.demo.domain.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -42,9 +42,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         MemberTable user = memberRepository.findByEmail(attributes.getEmail()).orElse(null);
         if(user == null){
             user = saveOrUpdate(attributes);
+            if(attributes.getPicture() != null) CommonMethod.downloadImage(attributes.getPicture(), attributes.getEmail().substring(attributes.getEmail().indexOf('_') + 1) + ".jpg");
         }
-
-        httpSession.setAttribute("user", new SessionUser(user));
 
         Set<MemberAuthority> authoritySet = new HashSet<>();
         authoritySet.add(MemberAuthority.USER);

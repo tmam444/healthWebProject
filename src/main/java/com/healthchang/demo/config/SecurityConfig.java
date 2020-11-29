@@ -2,7 +2,7 @@ package com.healthchang.demo.config;
 
 import com.healthchang.demo.config.auth.CustomOAuth2UserService;
 import com.healthchang.demo.config.handler.UserLoginFailHandler;
-import com.healthchang.demo.domain.MemberAuthority;
+import com.healthchang.demo.domain.member.MemberAuthority;
 import com.healthchang.demo.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -42,8 +42,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
                 .antMatchers("/admin/**").hasRole(MemberAuthority.ADMIN.name())
-                .antMatchers("/", "/css/**", "/board", "/member", "/js/**", "/h2-console/**").permitAll()
-                .antMatchers("/search").hasRole(MemberAuthority.USER.name());
+                .antMatchers("/", "/css/**", "/board", "/member", "/js/**", "/h2-console/**").permitAll();
+//                .antMatchers("/search").hasRole(MemberAuthority.USER.name());
+//                .antMatchers("/exercise").hasRole(MemberAuthority.USER.name());
 
         http.authorizeRequests()
                 .antMatchers("/oauth2/**").permitAll()

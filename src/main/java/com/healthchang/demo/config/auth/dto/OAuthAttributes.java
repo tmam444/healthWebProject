@@ -1,7 +1,7 @@
 package com.healthchang.demo.config.auth.dto;
 
-import com.healthchang.demo.domain.MemberAuthority;
-import com.healthchang.demo.domain.MemberTable;
+import com.healthchang.demo.domain.member.MemberAuthority;
+import com.healthchang.demo.domain.member.MemberTable;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -50,12 +50,14 @@ public class OAuthAttributes {
 //        System.out.println(response); //{id=120235908, email=fealtyhot@naver.com, name=이충렬, birthday=12-04}
         String id = (String)response.get("id");
         String name = (String)response.get("name");
-        String email = (String)response.get("email");
+        String email = (String)response.get("email") + "_" + id;
+        String password = name + "_" + id;
         String profile_image = (String)response.get("profile_image");
+
         return OAuthAttributes.builder()
                 .name(name)
-                .email(email + "_" + id)
-                .password(name + "_" + id)
+                .email(email)
+                .password(password)
                 .picture(profile_image)
                 .attributes(response)
                 .nameAttributeKey(userNameAttributeName)
@@ -66,12 +68,13 @@ public class OAuthAttributes {
 //        System.out.println(attributes); // {sub=117723292258952329379, name=이충렬, given_name=충렬, family_name=이, picture=https://lh3.googleusercontent.com/-q4r_svECB28/AAAAAAAAAAI/AAAAAAAAAAA/AMZuucnV4pHdfd7T0ayyPtSlQ80q4llt7Q/photo.jpg, email=tmam4411@gmail.com, email_verified=true, locale=ko}
         String id = (String)attributes.get("sub");
         String name = (String)attributes.get("name");
-        String email = (String)attributes.get("email");
+        String email = (String)attributes.get("email") + "_" + id;
+        String password = name + "_" + id;
         String profile_image = (String)attributes.get("picture");
         return OAuthAttributes.builder()
                 .name(name)
-                .email(email + "_" + id)
-                .password(name + "_" + id)
+                .email(email)
+                .password(password)
                 .picture(profile_image)
                 .attributes(attributes)
                 .nameAttributeKey(userNameAttributeName)
@@ -86,12 +89,13 @@ public class OAuthAttributes {
 //        System.out.println(kakao_account); //{nickname=충렬, profile_image=http://k.kakaocdn.net/dn/Kr4M5/btqGAeDqpC8/wAnzOGxFxSw9pN1I2fh86k/img_640x640.jpg, thumbnail_image=http://k.kakaocdn.net/dn/Kr4M5/btqGAeDqpC8/wAnzOGxFxSw9pN1I2fh86k/img_110x110.jpg}
         String id = Integer.toString((Integer) attributes.get("id"));
         String name = (String)kakao_account.get("nickname");
-        String email = (String)response.get("email");
-        String profile_image = (String)kakao_account.get("profile_image_url");
+        String email = (String)response.get("email") + "_" + id;
+        String password = name + "_" + id;
+        String profile_image = (String)kakao_account.get("profile_image");
         return OAuthAttributes.builder()
                 .name(name)
-                .email(email + "_" + id)
-                .password(name + "_" + id)
+                .email(email)
+                .password(password)
                 .picture(profile_image)
                 .attributes(attributes)
                 .nameAttributeKey(userNameAttributeName)
@@ -108,7 +112,6 @@ public class OAuthAttributes {
                 .password(password)
                 .picture(picture)
                 .date(new Date(new java.util.Date().getTime()))
-//                .authoritySet(Collections.singleton(MemberAuthority.USER))
                 .authoritySet(authoritySet)
                 .build();
     }

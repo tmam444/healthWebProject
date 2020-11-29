@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<header layout:fragment="header">
+    <nav class="navbar navbar-expand-sm bg-light navbar-light" style="position: relative;">
+        <button type="button" id="sidebarCollapse" class="btn btn-dark" style="padding: 12px 22px; position: absolute; top: 50%; left: 4%; transform: translate(-50%, -50%);">
+            <i class="fa fa-bars"></i>
+            <span class="sr-only">Toggle Menu</span>
+        </button>
+        <ul class="navbar-nav ml-auto mr-auto">
+            <a href="/" class="navbar-brand">
+                <img id="logoImage1" th:src="@{/images/Logo/logo.png}">
+            </a>
+        </ul>
+    </nav>
+    <nav th:replace="~{layout/navigation :: navigation}"></nav>
+</header>
+
+
+</body>
+</html>

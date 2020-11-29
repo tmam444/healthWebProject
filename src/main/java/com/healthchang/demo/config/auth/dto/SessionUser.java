@@ -1,6 +1,6 @@
 package com.healthchang.demo.config.auth.dto;
 
-import com.healthchang.demo.domain.MemberTable;
+import com.healthchang.demo.domain.member.MemberTable;
 import lombok.Getter;
 
 import java.io.Serializable;

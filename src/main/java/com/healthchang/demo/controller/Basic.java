@@ -1,6 +1,6 @@
 package com.healthchang.demo.controller;
 
-import com.healthchang.demo.domain.MemberTable;
+import com.healthchang.demo.domain.member.MemberTable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,5 +23,6 @@ public class Basic {
     String main(){
         return "main";
     }
+
 
 }

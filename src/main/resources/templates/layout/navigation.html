@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<!--Navbar-->
+<nav th:fragment="navigation" class="navbar navbar-expand-lg navbar-dark bg-dark">
+
+    <div class="container">
+
+        <!-- Collapse button -->
+        <button class="navbar-toggler float-right" type="button" data-toggle="collapse"
+                data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Collapsible content -->
+        <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
+
+            <!-- Links -->
+            <ul class="navbar-nav">
+
+                <li class="nav-item" th:classappend="${#httpServletRequest.getRequestURI() == '/exercise' ? 'active':''}">
+                    <a class="nav-link text-white" href="/exercise">운동 정보</a>
+                </li>
+                <li class="nav-item" th:classappend="${#httpServletRequest.getRequestURI() == '/food' ? 'active':''}">
+                    <a class="nav-link text-white" href="/food">음식 정보</a>
+                </li>
+                <li class="nav-item" th:classappend="${#httpServletRequest.getRequestURI() == '/#' ? 'active':''}">
+                    <a class="nav-link text-white" href="#">헬스보충제 정보</a>
+                </li>
+                <li class="nav-item" th:classappend="${#httpServletRequest.getRequestURI() == '/#' ? 'active':''}">
+                    <a class="nav-link text-white" href="#">운동 루틴</a>
+                </li>
+                <li class="nav-item" th:classappend="${#httpServletRequest.getRequestURI() == '/#' ? 'active':''}">
+                    <a class="nav-link text-white" href="#">식단 정보</a>
+                </li>
+                <li class="nav-item" th:classappend="${#httpServletRequest.getRequestURI() == '/search' ? 'active':''}">
+                    <a class="nav-link text-white" href="/search">서울 공공체육시설 검색</a>
+                </li>
+
+                <li class="nav-item avatar dropdown" sec:authorize="isAuthenticated()" style="position: absolute; right: 18%; top: 50%; transform: translateY(-50%); z-index: 100">
+                    <a class="nav-link p-0 dropdown-toggle" href="#" id="navbarDropdownMenuLink-333"
+                       data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">
+
+                        <img th:src="@{'/images/user/' + ${#authentication.principal.name} + '.jpg'}"
+                             class="rounded-circle z-depth-0" alt="avatar image" height="35"
+                             onerror="this.src = '/images/user/일반사용자.jpg'">
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right dropdown-default"
+                         aria-labelledby="navbarDropdownMenuLink-333">
+                        <a class="dropdown-item" href="/logout">로그아웃</a>
+                        <a class="dropdown-item" href="#">마이페이지</a>
+                        <a class="dropdown-item" href="#">다이어리</a>
+                    </div>
+                </li>
+
+                <li class="nav-item" sec:authorize="isAnonymous()" style="position: absolute; right: 15%; top: 50%; transform: translateY(-50%); z-index: 100">
+                    <a class="nav-link text-white" href="/login">
+                        <svg class="bi bi-lock" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd"
+                                  d="M11.5 8h-7a1 1 0 00-1 1v5a1 1 0 001 1h7a1 1 0 001-1V9a1 1 0 00-1-1zm-7-1a2 2 0 00-2 2v5a2 2 0 002 2h7a2 2 0 002-2V9a2 2 0 00-2-2h-7zm0-3a3.5 3.5 0 117 0v3h-1V4a2.5 2.5 0 00-5 0v3h-1V4z"
+                                  clip-rule="evenodd"/>
+                        </svg>
+                        로그인/가입
+                    </a>
+                </li>
+
+            </ul>
+            <!-- Links -->
+
+        </div>
+        <!-- CTA -->
+
+    </div>
+
+</nav>
+<!--/.Navbar-->
+
+
+</body>
+</html>

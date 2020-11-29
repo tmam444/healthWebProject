@@ -1,11 +1,10 @@
 package com.healthchang.demo.service;
 
-import com.healthchang.demo.domain.MemberAuthority;
-import com.healthchang.demo.domain.MemberTable;
-import com.healthchang.demo.repository.MemberRepository;
+import com.healthchang.demo.domain.member.MemberAuthority;
+import com.healthchang.demo.domain.member.MemberRepository;
+import com.healthchang.demo.domain.member.MemberTable;
+import com.healthchang.demo.dto.member.MemberRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,41 +15,48 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class MemberService implements UserDetailsService {
 
     private final MemberRepository repository;
     private PasswordEncoder encoder = new BCryptPasswordEncoder();
 
-    public List<MemberTable> findAll() {
-        return repository.findAll();
-    }
-
-    public MemberTable save(MemberTable member) {
-        MemberTable memberTable = repository.findByEmail(member.getEmail()).orElse(null);
-        if(memberTable == null){
-            HashSet<MemberAuthority> a = new HashSet<>();
-            a.add(MemberAuthority.USER);
-            member.setAuthoritySet(a);
-            member.setPassword(encoder.encode(member.getPassword()));
-            return repository.save(member);
-        }else{
-            return null;
+    @Transactional
+    public boolean save(MemberRequest member) {
+        boolean checkMember = repository.findByEmail(member.getEmail()).orElse(null) == null ? true : false;
+        if(checkMember){
+            HashSet<MemberAuthority> authorities = new HashSet<>();
+            authorities.add(MemberAuthority.USER);
+            String password = encoder.encode(member.getPassword());
+            repository.save(MemberTable.builder()
+                                .email(member.getEmail())
+                                .name(member.getName())
+                                .date(member.getDate())
+                                .password(password)
+                                .authoritySet(authorities)
+                            .build());
+            return true;
         }
+        return false;
     }
 
-    public Page<MemberTable> findAll(Pageable pageable) {
-        Page<MemberTable> all = repository.findAll(pageable);
-        return all;
+    public boolean checkDuplicationId(String id){
+        return repository.findByEmail(id).orElse(null) == null ? true : false;
     }
+
+    public MemberTable findByEmailEndingWith(String name) {
+        return repository.findByEmailEndingWith(name);
+    }
+
 
     static class UserDetailImpl extends User{
         public UserDetailImpl(MemberTable m){
             super(m.getEmail(), m.getPassword(), m.getAuthoritySet());
+        }
+        public String getName(){
+            return this.getUsername();
         }
     }
 
@@ -59,14 +65,6 @@ public class MemberService implements UserDetailsService {
         return repository.findByEmail(username)
         .map(UserDetailImpl::new)
         .orElseThrow(()-> new UsernameNotFoundException(username));
-    }
-
-    public boolean checkDuplicationId(String id){
-        MemberTable memberTable = repository.findByEmail(id).orElse(null);
-        if(memberTable == null){
-            return true;
-        }
-        return false;
     }
 
 }

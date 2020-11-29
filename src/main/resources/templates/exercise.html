@@ -2,118 +2,283 @@
 <html lang="ko"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
       layout:decorate="~{layout/main}">
 <head>
     <meta charset="UTF-8">
     <title>운동 정보</title>
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Jua&family=Poor+Story&display=swap" rel="stylesheet">
     <style>
-        .carousel-inner > div {
-            width: 1200px;
-            height: 600px;
+        .healthInfo > span {
+            display: block;
+            font-size: 18px;
+            padding-bottom: 10px;
         }
-
-        .col > img {
-            width: 100%;
-            height: 100%;
-            padding: 30px;
+        #placeBtn {
+            height: 36.4px;
+            padding: 0 2.14rem;
         }
-        footer {
-            position: fixed;
-            height: 100px;
-            bottom: 0;
-            width: 100%;
+        #mapDiv {
+            padding: 0;
         }
-    </style>
-    <style>
-
-        .col > .calorie {
+        #description_link {
             position: absolute;
-            top: 0%;
-            width: 95%;
-            height: 95%;
-            background: rgba(0, 65, 106, 0.9); /* fallback for old browsers */
-            background: -webkit-linear-gradient(to right, rgba(228, 229, 230, 0.9), rgba(0, 65, 106, 0.9)); /* Chrome 10-25, Safari 5.1-6 */
-            background: linear-gradient(to right, rgba(228, 229, 230, 0.9), rgba(0, 65, 106, 0.9)); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-            opacity: 0;
-            transition: all 0.5s;
+            top: 80%;
+            right: 10%;
         }
-
-        .col > .calorie:hover {
-            opacity: 1;
-        }
-
-        .col > .calorie > span:first-child {
-            position: absolute;
-            top: 20%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-family: 'Jua', sans-serif;
-            font-weight: 500;
-            font-size: 40px;
-        }
-
-        .col > .calorie > span:nth-child(2) {
-            position: absolute;
-            top: 45%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-family: 'Poor Story', cursive;
-            font-size: 30px;
+        .w-83 {
             width: 80%;
         }
+        .form-check {position: relative; display: block; padding-left: 1.25rem;}
+        .form-check-input {position: absolute;margin-top: .3rem;margin-left: -1.25rem;}
+        button, input {overflow: visible;}
+        input, button, select, optgroup, textarea {margin: 0;font-family: inherit;font-size: inherit;line-height: inherit;}
+        input[type="radio" i] {background-color: initial;cursor: default;appearance: checkbox;box-sizing: border-box;margin: 3px 3px 3px 4px;padding: initial;border: initial;}
+        input {-webkit-writing-mode: horizontal-tb !important;text-rendering: auto;color: -internal-light-dark(black, white);letter-spacing: normal;word-spacing: normal;text-transform: none;text-indent: 0px;text-shadow: none;display: inline-block;text-align: start;appearance: textfield;background-color: -internal-light-dark(rgb(255, 255, 255), rgb(59, 59, 59));-webkit-rtl-ordering: logical;cursor: text;margin: 0em;font: 400 13.3333px Arial;padding: 1px 2px;border-width: 2px;border-style: inset;border-color: -internal-light-dark(rgb(118, 118, 118), rgb(133, 133, 133));border-image: initial;}
 
-        .col > .calorie > button {
-            position: absolute;
-            top: 70%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            cursor: pointer
+        .form-check-input[type="radio"]+label, label.btn input[type="radio"]+label {
+            position: relative;
+            display: inline-block;
+            height: 1.5625rem;
+            padding-left: 35px;
+            line-height: 1.5625rem;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
 
+        .form-check-label {
+            margin-bottom: 0;
+        }
+
+        .form-check-input[type="radio"]:checked+label:before, label.btn input[type="radio"]:checked+label:before {
+            top: -4px;
+            left: -5px;
+            width: 12px;
+            height: 1.375rem;
+            border-top: 2px solid transparent;
+            border-right: 2px solid #4285f4;
+            border-bottom: 2px solid #4285f4;
+            border-left: 2px solid transparent;
+            -webkit-transform: rotate(40deg);
+            transform: rotate(40deg);
+            -webkit-transform-origin: 100% 100%;
+            transform-origin: 100% 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+        }
+
+        .form-check-input[type="radio"]+label:before, .form-check-input[type="radio"]:not(.filled-in)+label:after, label.btn input[type="radio"]+label:before, label.btn input[type="radio"]:not(.filled-in)+label:after {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            width: 18px;
+            height: 18px;
+            margin-top: 3px;
+            content: "";
+            /*border: 2px solid #8a8a8a;*/
+            border-radius: 1px;
+            -webkit-transition: .2s;
+            transition: .2s;
+        }
     </style>
     <script th:inline="javascript">
-        /*<![CDATA[*/
 
-        let allCount = /*[[${count}]]*/ 'default';
-        let pagingNum = /*[[${page}]]*/ 'default';
-        let pagingCount = Math.ceil(allCount / 9);
+        exercise = {name : '', calorie : '', effect : '', videoLink : ''}
 
-        let list = /*[[${list}]]*/ 'default';
-        let exercise;
-        let calcCalorie;
-        console.log(list);
+        function infoChange(info) {
+            deleteCalorieData();
 
+            exercise.name = info.getAttribute('data-name');
+            exercise.calorie = info.getAttribute('data-calorie');
+            exercise.effect = info.getAttribute('data-effect');
+            exercise.videoLink = info.getAttribute('data-link');
 
-        /*]]>*/
-    </script>
+            $('#exerciseName').text('칼로리 계산하기 - ' + exercise.name);
+            $('#videoLink').css('display', 'block');
 
-    <script>
-        function calorieCalculator(weight, hour){
-            exercise = $('#exercise option:selected').val();
-            calcCalorie = weight * hour * list[exercise].calorie;
-            $('#calorie').val(calcCalorie);
-            console.log(calcCalorie);
-            // console.log($('#calorie'));
+            if(exercise.videoLink === 'undefined'){
+                $('#videoLink').attr('href', `https://www.youtube.com/results?search_query=${exercise.name}`);
+            }
+            else {
+                $('#videoLink').attr('href', exercise.videoLink);
+            }
+            $('#effect > .card-body > .card-text').text(exercise.effect);
+            $('#effectExerciseName').text(exercise.name);
         }
 
-        function pagingWork(){
-            var i = 0;
-            var pagingTag = $('#pagingTag');
-            for (i = 1; i <= pagingCount; i++){
+        function deleteCalorieData() {
+            $('#weight').val('');
+            $('#time').val('');
+            $('#calorie').val('');
+        }
 
-                if(i == pagingNum){
-                    var p = `<li class="page-item active"><a class="page-link" href="/exercise?page=${i}">${i}</a></li>`;
-                }else{
-                    var p = `<li class="page-item"><a class="page-link" href="/exercise?page=${i}">${i}</a></li>`;
+        function categoryClick(thisVar){
+            var keyword = $(thisVar).children('label')[0].innerHTML;
+            var id = $(thisVar).children('input')[0].id;
+            makeTypeList(keyword, id);
+        }
+
+        function nodeListDisplayNoneAndOneThingBlock(list, id){
+            for(var i = 0; i<list.length; i++){
+                $(list[i]).css('display', 'none');
+            }
+            $(`#${id}`).css('display', 'block');
+        }
+
+        function typeClick(thisVar){
+            var category = $(`input[name=category]:checked`)[0].labels[1].innerHTML;
+            var type = $(thisVar).children('label')[0].innerHTML;
+            var id = $(thisVar).children('input')[0].id;
+            makeExerciseList(category, type, id);
+        }
+
+        function makeTypeList(keyword, id){
+            var id = `${id}typeList`;
+            if(document.getElementById(id) == null){
+                $('#typeList').append(`<ul class="list-group list-group-flush" id="${id}"></ul>`);
+                findType(keyword, id);
+            }
+
+            var nodeList = $('#typeList')[0].childNodes;
+
+            nodeListDisplayNoneAndOneThingBlock(nodeList, id);
+        }
+
+        function makeExerciseList(category, type, id){
+            var id = `${id}exerciseList`;
+            if(document.getElementById(id) == null){
+                $('#exerciseList').append(`<ul class="list-group list-group-flush" id="${id}"></ul>`);
+                findExercise(category, type, id);
+            }
+
+            var nodeList = $('#exerciseList')[0].childNodes;
+
+            nodeListDisplayNoneAndOneThingBlock(nodeList, id);
+        }
+
+        function findType(keyword, id){
+            $.ajax({
+                url: `/exercise_findType?keyword=${keyword}`,
+                type: "POST",
+                cache: false,
+                dataType: "json",
+                data: "",
+                success: function (data) {
+                    for(var i = 0; i<data.list.length; i++){
+                        $(`#${id}`).append(`<label class="list-group-item d-flex justify-content-between align-items-center list-group-item-action m-0 border-bottom" onclick="typeClick(this)">
+                                                <input type="radio" class="form-check-input" name="type" id="${id}${i}" style="visibility: hidden;">
+                                                <label class="form-check-label" for="${id}${i}">${data.list[i].type}</label>
+                                                <span class="badge badge-primary badge-pill">${data.list[i].count}</span>
+                                            </label>`);
+                    }
+                },
+                error: function (request, status, error) {
+                    var msg = "ERROR : " + request.status + "<br>";
+                    msg += "내용 : " + request.responseText + "<br>" + error;
+                    console.log(msg);
                 }
-                pagingTag.append(p);
+            });
+        }
+
+        function findExercise(category, type, id){
+            $.ajax({
+                url: `/exercise_findList?category=${category}&type=${type}`,
+                type: "POST",
+                cache: false,
+                dataType: "json",
+                data: "",
+                success: function (data) {
+                    for(var i = 0; i<data.list.length; i++){
+                        if(category === '내가 추가한 운동'){
+                            $(`#${id}`).append(`<li class="list-group-item border-0" style="border-bottom: 1px solid #dee2e6 !important;">
+                                                <img class="mr-3" src="/images/exercise/운동.jpg"
+                                                 style="width: 37px; height: 37px;" onerror="this.src='/images/exercise/운동.jpg'">
+                                                <span style="line-height: 43px;">${data.list[i].name}</span>
+                                                <a data-name="${data.list[i].name}" data-calorie="${data.list[i].calorie}" data-effect="${data.list[i].effect}" data-link="${data.list[i].videoLink}"
+                                                onclick="infoChange(this)" class="btn btn-sm btn-primary float-right">확 인</a>
+                                                <button type="button" data-target="#modifyExercise" data-toggle="modal" onclick="modifyExerciseLoad('${data.list[i].name}', '${data.list[i].type}', '${data.list[i].effect}', '${data.list[i].calorie}', ${data.list[i].id})" class="btn btn-sm btn-info float-right">수정</button>
+                                                <button type="button" class="btn btn-sm btn-dark float-right" onclick="deleteExercise(${data.list[i].id})">삭 제</button>
+                                            </li>`);
+                        }else{
+                            $(`#${id}`).append(`<li class="list-group-item border-0" style="border-bottom: 1px solid #dee2e6 !important;">
+                                                <img class="mr-3" src="/images/exercise/${data.list[i].name}.jpg"
+                                                 style="width: 37px; height: 37px;" onerror="this.src='/images/exercise/운동.jpg'">
+                                                <span style="line-height: 43px;">${data.list[i].name}</span>
+                                                <a data-name="${data.list[i].name}" data-calorie="${data.list[i].calorie}" data-effect="${data.list[i].effect}" data-link="${data.list[i].videoLink}"
+                                                onclick="infoChange(this)" class="btn btn-sm btn-primary float-right">확 인</a>
+                                            </li>`);
+                        }
+                    }
+                },
+                error: function (request, status, error) {
+                    var msg = "ERROR : " + request.status + "<br>";
+                    msg += "내용 : " + request.responseText + "<br>" + error;
+                    console.log(msg);
+                }
+            });
+        }
+
+        function modifyExerciseLoad(name, type, effect, calorie, id){
+            var form = $('form[name=modifyExercise] input');
+            form[0].value = name;
+            form[1].value = type;
+            form[2].value = effect;
+            form[3].value = Math.round(calorie * 70);
+            form[4].value = id;
+        }
+
+        function deleteExercise(id){
+            if(confirm('삭제하시겠습니까?')){
+                location.replace('/exerciseDelete?id='+id);
             }
         }
 
-        $(function (){
-            pagingWork();
+        $(function () {
+
+
+            function calorieKeyup(){
+                $('#time').on('keyup', function (){
+                    var weight = $('#weight').val();
+                    var value = $(this).val()/60;
+                    $('#calorie').text(Math.ceil(weight * value * exercise.calorie) + 'kcal');
+                })
+            }
+
+            function listSearch() {
+                $("#search").on("keyup", function () {
+                    var value = $(this).val().toLowerCase();
+                    if(value === ''){
+                        $(`input[name=type]:checked`)[0].click();
+                    }else{
+                        var nodeList = $('#exerciseList')[0].childNodes;
+                        nodeListDisplayNoneAndOneThingBlock(nodeList, 'category0typeList0exerciseList');
+                    }
+                    $("#category0typeList0exerciseList li").filter(function () {
+                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                    });
+                });
+            }
+
+            function basicCategoryAndTypeClick(){
+                $('.category')[0].click();
+                setTimeout(function (){
+                    $('#typeList').children('ul').children('label')[0].click();
+                }, 100);
+                setTimeout(function () {
+                    $('ul#category0typeList0exerciseList li a')[0].click();
+                }, 200);
+            }
+
+            function init() {
+                calorieKeyup();
+                listSearch();
+                basicCategoryAndTypeClick();
+            }
+
+            init();
         })
 
         //내가 직접 운동 추가하고, 칼로리 검색하고 검색창까지 만들기
@@ -121,69 +286,186 @@
         //정확한 자세가 나오게끔(운동법) 운동의 설명 추가(장단점)
         //보충제 추가할 수 있게끔
     </script>
-
 </head>
 <body>
-<div class="container h-100 mb-4 mt-4 h-auto" layout:fragment="content_body">
-    <div class="row">
-        <div class="col col-sm-4 pr-2" th:each="element : ${list}">
-            <img th:src="@{${'/images/exercise/' + element.getName() + '.jpg'}}">
-            <p class="calorie">
-                <span th:text="${element.getName()}"></span>
-                <span>
-                    분당 칼로리 소모량 : <span th:text="${element.getCalorie()}"></span>
-                    </span>
-                <button type="button" class="btn btn-lg btn-dark w-50" data-toggle="modal" data-target="#exampleModalCenter">
-                    칼로리 계산하기
-                </button>
-            </p>
-        </div>
+<div class="container h-100 mb-4 h-auto" layout:fragment="content_body">
+    <div class="text-center">
+        <form class="form-inline d-flex justify-content-center md-form form-sm active-cyan-2 mt-4">
+            <input class="form-control form-control-sm mr-3 w-25" type="text" placeholder=""
+                   aria-label="Search" id="search">
+            <i class="fas fa-search" aria-hidden="true"></i>
+        </form>
+    </div>
 
+    <div class="row mt-4" style="height: auto">
         <div class="col-sm-11 col-md-11 col-lg-11 mx-auto">
-            <nav aria-label="Page navigation example">
-                <ul class="pagination justify-content-center mt-3" id="pagingTag">
-                </ul>
-            </nav>
+            <div class="col-sm-12 col-md-12 col-lg-12 mx-auto p-0 h-auto">
+                <div class="col-sm-3 col-md-3 col-lg-3 mx-auto border d-inline-block float-left overflow-auto p-0 border-bottom-0 text-center">운동 종류</div>
+                <div class="col-sm-3 col-md-3 col-lg-3 mx-auto border d-inline-block float-left overflow-auto p-0 border-bottom-0 text-center">부위</div>
+                <div class="col-sm-6 col-md-6 col-lg-6 mx-auto border d-inline-block float-left overflow-auto p-0 border-bottom-0 text-center">설명</div>
+            </div>
+            <div class="col-sm-12 col-md-12 col-lg-12 mx-auto p-0 h-auto">
+                <div class="col-sm-3 col-md-3 col-lg-3 mx-auto border d-inline-block float-left overflow-auto p-0" style="height: 220px;">
+                    <ul class="list-group list-group-flush">
+                        <label class="category list-group-item d-flex justify-content-between align-items-center list-group-item-action m-0" th:each="element, iterStat : ${list}" onclick="categoryClick(this)">
+                            <input type="radio" class="form-check-input" name="category" th:id="'category' + ${iterStat.index}" style="visibility: hidden;">
+                            <label class="form-check-label" th:for="'category' + ${iterStat.index}" th:text="${element.getCategory()}"></label>
+                            <span class="badge badge-primary badge-pill" th:text="${element.getCount()}">14</span>
+                        </label>
+                    </ul>
+                </div>
+                <div class="col-sm-3 col-md-3 col-lg-3 mx-auto border d-inline-block float-left p-0 overflow-auto" style="height: 220px;">
+                    <div class="list-group list-group-flush" id="typeList"></div>
+                </div>
+                <div class="col-sm-6 col-md-6 col-lg-6 mx-auto border d-inline-block float-left mb-5 overflow-auto p-0" style="height: 220px;" id="exerciseList">
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-md-6 col-lg-6 border float-left p-0" style="height: 347px;">
+                <div class="card text-center shadow-none">
+                    <div class="card-header">
+                        <ul class="nav nav-pills card-header-pills">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#calcCalorie"
+                                   role="tab"
+                                   aria-controls="calcCalorie" aria-selected="true">칼로리 계산</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link ml-2" id="pills-effect-tab" data-toggle="pill" href="#effect"
+                                   role="tab"
+                                   aria-controls="pills-effect-tab" aria-selected="true">효과</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="tab-content" id="pills-tabContent">
+                        <div class="tab-pane fade show active" id="calcCalorie" role="tabpanel"
+                             aria-labelledby="pills-home-tab" style="max-height: 221px;">
+                            <div class="card-body" style="margin-bottom: 2.5rem !important;">
+                                <h5 id="exerciseName" class="card-title">칼로리 계산하기 - 배구</h5>
+                                <p class="card-text">몸무게 및 운동한 시간을 적고, 칼로리를 계산하세요!</p>
+                                <div class="form-group">
+                                    <label for="weight" class="col-form-label float-left">몸무게 (kg) : &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        &nbsp; &nbsp;</label>
+                                    <input type="text" class="form-control w-25" id="weight">
+                                </div>
+                                <div class="form-group">
+                                    <label for="time" class="col-form-label float-left">운동시간 (minute) :&nbsp;&nbsp;</label>
+                                    <input type="text" class="form-control w-25" id="time">
+                                </div>
+
+                                <div class="form-group mt-4">
+                                    <h5 class="card-title">소모 칼로리 : <span id="calorie"></span></h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="effect" role="tabpanel" aria-labelledby="pills-effect-tab"
+                             style="min-height: 245px;">
+                            <div class="card-body"
+                                 style="margin-bottom: 1rem !important; padding-top: 5rem !important;">
+                                <h5 class="card-title"><span id="effectExerciseName"></span> 운동 효과</h5>
+                                <p class="card-text">궁금한 운동의 상세보기를 클릭해보세요!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-6 col-lg-6 border float-right p-0" style="height: 347px;">
+                <button sec:authorize="isAuthenticated()" type="button"
+                        class="btn btn-sm btn-outline-default btn-rounded waves-effect w-auto float-right"
+                        data-target="#insertExercise" data-toggle="modal" style="border-radius: 10rem; position: absolute; right: 0; top: -14%;">운동 추가하기
+                </button>
+                <a id="videoLink" href="#" target="_blank">
+                    <div style="background-image: url('/images/youtube.png'); background-size: contain; height: 100%; width: 100%; background-repeat: no-repeat; position: absolute; left: 15%;"></div>
+                </a>
+            </div>
         </div>
     </div>
 
-
-    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
-         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal fade" id="insertExercise" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle" aria-hidden="true" sec:authorize="isAuthenticated()">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">칼로리 계산하기</h5>
+                    <h5 class="modal-title" id="exampleModalLongTitle">운동 추가하기</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form>
+                    <form class="w-100" name="addExercise" action="/exerciseAdd" method="post">
                         <div class="form-group">
-                            <label for="exercise" class="col-form-label">운동 종류 : </label>
-                            <select class="custom-select w-25 d-block" id="exercise">
-                                <option selected>선택</option>
-                                <option th:each="element, iterStat : ${list}" th:value="${iterStat.index}" th:text="${element.getName()}"></option>
-                            </select>
+                            <label class="col-form-label">운동 이름 : &nbsp; </label>
+                            <input name="name" type="text" class="form-control w-83 d-inline-block float-right">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-form-label">부위 : &nbsp; </label>
+                            <input name="type" type="text" class="form-control w-83 d-inline-block float-right">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-form-label">효과 : &nbsp; </label>
+                            <input name="effect" type="text" class="form-control w-83 d-inline-block float-right">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-form-label">몸무게(kg) : &nbsp;</label>
+                            <input name="weight" type="text" class="form-control w-83 d-inline-block float-right">
                         </div>
                         <div class="form-group">
-                            <label for="weight" class="col-form-label">몸무게(kg) : </label>
-                            <input type="text" class="form-control w-25" id="weight">
-                        </div>
-                        <div class="form-group">
-                            <label for="time" class="col-form-label">운동시간 (hour) : </label>
-                            <input type="text" class="form-control w-25" id="time">
-                        </div>
-                        <div class="form-group">
-                            <label for="calorie" class="col-form-label d-block">총 칼로리 (kcal) : </label>
-                            <input type="text" class="form-control w-25 d-inline-block" id="calorie" readonly>
-                            <button type="button" class="btn btn-dark float-right" onclick="calorieCalculator(weight.value, time.value)">계산하기</button>
+                            <label class="col-form-label">시간당 소모 칼로리 (kcal) : </label>
+                            <input name="calorie" type="text" class="form-control d-inline-block float-right"
+                                   style="width: 62%;">
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+                    <button type="submit" class="btn btn-sm btn-dark" onclick="addExercise.submit()">추가하기</button>
+                    <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modifyExercise" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle" aria-hidden="true" sec:authorize="isAuthenticated()">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">운동 수정하기</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="w-100" name="modifyExercise" action="/exerciseModify" method="post">
+                        <div class="form-group">
+                            <label class="col-form-label">운동 이름 : &nbsp; </label>
+                            <input name="name" type="text" class="form-control w-83 d-inline-block float-right">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-form-label">부위 : &nbsp; </label>
+                            <input name="type" type="text" class="form-control w-83 d-inline-block float-right">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-form-label">효과 : &nbsp; </label>
+                            <input name="effect" type="text" class="form-control w-83 d-inline-block float-right">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-form-label">시간당 소모 칼로리 (kcal) : </label>
+                            <input name="calorie" type="text" class="form-control d-inline-block float-right"
+                                   style="width: 62%;">
+                            <span class="card-text font-small">※ 70kg 기준️</span>
+                        </div>
+                        <input type="hidden" name="id">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-sm btn-info" onclick="modifyExercise.submit()">수정하기</button>
+                    <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">닫기</button>
                 </div>
             </div>
         </div>

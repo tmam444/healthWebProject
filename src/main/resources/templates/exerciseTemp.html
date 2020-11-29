@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <meta charset="UTF-8">
+    <title>운동 정보</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Jua&family=Poor+Story&display=swap" rel="stylesheet">
+    <style>
+        .carousel-inner > div {
+            width: 1200px;
+            height: 600px;
+        }
+
+        .col > img {
+            width: 100%;
+            height: 100%;
+            padding: 30px;
+        }
+        footer {
+            position: fixed;
+            height: 100px;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+    <style>
+
+        .col > .calorie {
+            position: absolute;
+            top: 0%;
+            width: 95%;
+            height: 95%;
+            background: rgba(0, 65, 106, 0.9); /* fallback for old browsers */
+            background: -webkit-linear-gradient(to right, rgba(228, 229, 230, 0.9), rgba(0, 65, 106, 0.9)); /* Chrome 10-25, Safari 5.1-6 */
+            background: linear-gradient(to right, rgba(228, 229, 230, 0.9), rgba(0, 65, 106, 0.9)); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+            opacity: 0;
+            transition: all 0.5s;
+        }
+
+        .col > .calorie:hover {
+            opacity: 1;
+        }
+
+        .col > .calorie > span:first-child {
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Jua', sans-serif;
+            font-weight: 500;
+            font-size: 40px;
+        }
+
+        .col > .calorie > span:nth-child(2) {
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Poor Story', cursive;
+            font-size: 30px;
+            width: 80%;
+        }
+
+        .col > .calorie > button {
+            position: absolute;
+            top: 70%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            cursor: pointer
+        }
+
+    </style>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+
+        let allCount = /*[[${count}]]*/ 'default';
+        let pagingNum = /*[[${page}]]*/ 'default';
+        let pagingCount = Math.ceil(allCount / 9);
+
+        let list = /*[[${list}]]*/ 'default';
+        let exercise;
+        let calcCalorie;
+        console.log(list);
+
+
+        /*]]>*/
+    </script>
+
+    <script>
+        function calorieCalculator(weight, hour){
+            exercise = $('#exercise option:selected').val();
+            calcCalorie = weight * hour * list[exercise].calorie;
+            $('#calorie').val(calcCalorie);
+            console.log(calcCalorie);
+            // console.log($('#calorie'));
+        }
+
+        function pagingWork(){
+            var i = 0;
+            var pagingTag = $('#pagingTag');
+            for (i = 1; i <= pagingCount; i++){
+
+                if(i == pagingNum){
+                    var p = `<li class="page-item active"><a class="page-link" href="/exercise?page=${i}">${i}</a></li>`;
+                }else{
+                    var p = `<li class="page-item"><a class="page-link" href="/exercise?page=${i}">${i}</a></li>`;
+                }
+                pagingTag.append(p);
+            }
+        }
+
+        $(function (){
+            pagingWork();
+        })
+
+        //내가 직접 운동 추가하고, 칼로리 검색하고 검색창까지 만들기
+        //문의 게시판, 공지사항 만들기
+        //정확한 자세가 나오게끔(운동법) 운동의 설명 추가(장단점)
+        //보충제 추가할 수 있게끔
+    </script>
+
+</head>
+<body>
+<div class="container h-100 mb-4 mt-4 h-auto" layout:fragment="content_body">
+    <div class="row">
+        <div class="col col-sm-4 pr-2" th:each="element : ${list}">
+            <img th:src="@{${'/images/exercise/' + element.getName() + '.jpg'}}">
+            <p class="calorie">
+                <span th:text="${element.getName()}"></span>
+                <span>
+                    분당 칼로리 소모량 : <span th:text="${element.getCalorie()}"></span>
+                    </span>
+                <button type="button" class="btn btn-lg btn-dark w-50" data-toggle="modal" data-target="#exampleModalCenter">
+                    칼로리 계산하기
+                </button>
+            </p>
+        </div>
+
+        <div class="col-sm-11 col-md-11 col-lg-11 mx-auto">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center mt-3" id="pagingTag">
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">칼로리 계산하기</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="exercise" class="col-form-label">운동 종류 : </label>
+                            <select class="custom-select w-25 d-block" id="exercise">
+                                <option selected>선택</option>
+                                <option th:each="element, iterStat : ${list}" th:value="${iterStat.index}" th:text="${element.getName()}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="weight" class="col-form-label">몸무게(kg) : </label>
+                            <input type="text" class="form-control w-25" id="weight">
+                        </div>
+                        <div class="form-group">
+                            <label for="time" class="col-form-label">운동시간 (hour) : </label>
+                            <input type="text" class="form-control w-25" id="time">
+                        </div>
+                        <div class="form-group">
+                            <label for="calorie" class="col-form-label d-block">총 칼로리 (kcal) : </label>
+                            <input type="text" class="form-control w-25 d-inline-block" id="calorie" readonly>
+                            <button type="button" class="btn btn-dark float-right" onclick="calorieCalculator(weight.value, time.value)">계산하기</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

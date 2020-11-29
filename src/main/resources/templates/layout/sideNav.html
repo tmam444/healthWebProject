@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<nav layout:fragment="sideNav" id="sidebar" class="active">
+    <div class="p-4">
+        <h1><a href="index.html" class="logo">Flash</a></h1>
+        <img sec:authorize="isAnonymous()" href="#" id="sidebar_logo" class="img logo rounded-circle mb-3" src="/images/user/일반사용자.jpg">
+        <img sec:authorize="isAuthenticated()" id="sidebar_logo" th:src="@{'/images/user/' + ${#authentication.getPrincipal().getName()} + '.jpg'}"
+             class="rounded-circle z-depth-0 img mb-3"
+             alt="avatar image" height="35"
+             onerror="this.src = '/images/user/일반사용자.jpg'">
+
+        <ul class="list-unstyled components mb-5">
+            <li class="active">
+                <a href="#"><span class="fa fa-home mr-3"></span> Home</a>
+            </li>
+            <li>
+                <a href="#"><span class="fa fa-user mr-3"></span> About</a>
+            </li>
+            <li>
+                <a href="#"><span class="fa fa-briefcase mr-3"></span> Portfolio</a>
+            </li>
+            <li>
+                <a href="#"><span class="fa fa-sticky-note mr-3"></span> Blog</a>
+            </li>
+            <li>
+                <a href="#"><span class="fa fa-paper-plane mr-3"></span> Contact</a>
+            </li>
+        </ul>
+
+        <div class="mb-4">
+            <h3 class="h6 mb-3">Subscribe for newsletter</h3>
+            <form action="#" class="subscribe-form">
+                <div class="form-group d-flex">
+                    <div class="icon"><span class="icon-paper-plane"></span></div>
+                    <input id="sideSearch" type="text" class="form-control" placeholder="Enter Email Address">
+                </div>
+            </form>
+        </div>
+
+        <div class="footer">
+            <small>Copyright &copy;<script>document.write(new Date().getFullYear());</script> Lee Chung Ryeol</small><br><br>
+            <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                Copyright &copy;<script>document.write(new Date().getFullYear());</script>
+                All rights reserved | This template is made with <i class="icon-heart" aria-hidden="true"></i> by <a
+                        href="https://colorlib.com" target="_blank">Colorlib.com</a>
+                <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
+        </div>
+
+    </div>
+</nav>
+
+</body>
+</html>

@@ -94,7 +94,6 @@ public class AuthController {
         //Gson, Json Simple, ObjectMapper
         ObjectMapper obMapper2 = new ObjectMapper();
         KakaoProfile kakaoProfile = null;
-        System.out.println(response2.getBody());
 
         try {
             kakaoProfile = obMapper2.readValue(response2.getBody(), KakaoProfile.class);
