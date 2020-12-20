@@ -31,6 +31,7 @@ public class ExerciseController {
         List<ExerciseCaloriesCategoryAndTypeDto> categoryList = exerciseService.findGroupByCategory();
         if(principal != null) {
             MemberTable memberTable = memberService.findByEmailEndingWith(principal.getName());
+            model.addAttribute("memberId", memberTable.getId());
             List<ExerciseCaloriesCategoryAndTypeDto> userList = exerciseService.findByMyExercise(memberTable);
             for (int i = 0; i < userList.size(); i++) {
                 categoryList.add(categoryList.size(), userList.get(i));
@@ -40,22 +41,27 @@ public class ExerciseController {
         return "exercise";
     }
 
-    @PostMapping("/exercise_description")
+/*    @PostMapping("/exercise_description")
     @ResponseBody
     public String exercise_Description(@RequestParam(value = "keyword", defaultValue = "") String keyword){
         String urlstr = "https://www.googleapis.com/customsearch/v1?key=AIzaSyCFEBLuMeI9kLwjOG22tzlVO60RXr-nldo&cx=6763bf449d6cfdf94&q=" + keyword;
         StringBuffer stringBuffer = CommonMethod.apiURLimport(urlstr, "GET");
         return stringBuffer.toString();
-    }
+    }*/
 
     @PostMapping("/exercise_findType")
     @ResponseBody
-    public String exercise_findType(@RequestParam(value = "keyword", defaultValue = "전체") String keyword){
+    public String exercise_findType(@RequestParam(value = "keyword", defaultValue = "전체") String keyword, String memberId){
         List<ExerciseCaloriesCategoryAndTypeDto> list = null;
         if(keyword.equals("전체"))
             list = exerciseService.findAllByGroupByType();
-        else
-            list = exerciseService.findGroupByTypeAndCategoryEquals(keyword);
+        else {
+            if(keyword.equals("내가 추가한 운동") && !memberId.equals("null")){
+                list = exerciseService.findGroupByTypeAndCategoryEqualsAndMemberIdEquals(keyword, memberId);
+            }else{
+                list = exerciseService.findGroupByTypeAndCategoryEquals(keyword);
+            }
+        }
 
         return CommonMethod.inputListOutputJson(list).toString();
     }

@@ -19,6 +19,8 @@ public class FoodCalorie {
 
     @Column private String category;
 
+    @Column private String unit;
+
     @Column private int ones;
 
     @Column private double calorie;
@@ -31,7 +33,7 @@ public class FoodCalorie {
 
     @Column private double sugar;
 
-    @Column private double dietary_fiber;
+    @Column private double dietaryFiber;
 
     @Column private double calcium;
 
@@ -43,32 +45,33 @@ public class FoodCalorie {
 
     @Column private double cholesterol;
 
-    @Column private double vitamin_B1;
+    @Column private double vitaminB1;
 
-    @Column private double vitamin_B2;
+    @Column private double vitaminB2;
 
-    @Column private double vitamin_C;
+    @Column private double vitaminC;
 
     @Builder
-    public FoodCalorie (String type, String name, String category, int ones, double calorie, double protein, double fat, double carbohydrate, double sugar, double dietary_fiber, double calcium, double magnesium, double kalium, double natrium, double vitamin_B1, double vitamin_B2, double vitamin_C, double cholesterol){
+    public FoodCalorie (String type, String name, String category, String unit, int ones, double calorie, double protein, double fat, double carbohydrate, double sugar, double dietary_fiber, double calcium, double magnesium, double kalium, double natrium, double vitaminB1, double vitaminB2, double vitaminC, double cholesterol){
         this.type = type;
         this.name = name;
         this.category = category;
+        this.unit = unit;
         this.ones = ones;
         this.calorie = calorie;
         this.protein = protein;
         this.fat = fat;
         this.carbohydrate = carbohydrate;
         this.sugar = sugar;
-        this.dietary_fiber = dietary_fiber;
+        this.dietaryFiber = dietary_fiber;
         this.calcium = calcium;
         this.magnesium = magnesium;
         this.kalium = kalium;
         this.natrium = natrium;
         this.cholesterol = cholesterol;
-        this.vitamin_B1 = vitamin_B1;
-        this.vitamin_B2 = vitamin_B2;
-        this.vitamin_C = vitamin_C;
+        this.vitaminB1 = vitaminB1;
+        this.vitaminB2 = vitaminB2;
+        this.vitaminC = vitaminC;
     }
 
 

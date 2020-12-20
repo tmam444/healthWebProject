@@ -32,10 +32,9 @@
 
 <div class="container h-100 mb-4 h-auto" layout:fragment="content_body">
     <div class="text-center">
-        <form class="form-inline d-flex justify-content-center md-form form-sm active-cyan-2 mt-4" method="post" action="/foodSearch">
-            <input class="form-control form-control-sm mr-3 w-25" type="text" placeholder="음식 검색"
-                   aria-label="Search" id="search" name="search">
-            <i class="fas fa-search" aria-hidden="true"></i>
+        <form class="form-inline d-flex justify-content-center md-form form-sm active-cyan-2 mt-4" method="get" action="/foodSearch" name="search">
+            <input class="form-control form-control-sm mr-3 w-25" type="text" placeholder="음식 검색" aria-label="Search" id="search" name="search">
+            <i class="fas fa-search" aria-hidden="true" href="javascript:{}" onclick="document.getElementsByName('search')[0].submit();" style="cursor: pointer"></i>
         </form>
     </div>
 
@@ -55,20 +54,24 @@
                 </div>
             </div>
 
+            <!-- Food List -->
             <div class="col-sm-12 col-md-12 col-lg-12 mx-auto">
                 <div class="md-accordion accordion border-0" id="accordionEx" role="tablist" aria-multiselectable="true">
-                    <!-- Accordion card -->
-                    <div class="card border-0">
-                        <!-- Card header -->
-                        <div class="card-header" role="tab" id="headingOne">
-                            <a class="collapsed" data-toggle="collapse" data-parent="#accordionEx" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                <h6 class="card-title m-0 font-weight-bold">불고기</h6>
-                                <p class="card-text font-size_09rem m-0">불고기, 150g<i class="fas fa-angle-down rotate-icon listIcon"></i></p>
-                                <p class="card-text font-size_09rem m-0">칼로리: 52kcal • 탄수화물: 14g • 지방: 0g • 단백질: 0g</p>
+                    <div class="card border-0" th:each="element, iterStat : ${list}">
+                        <!-- Food Name -->
+                        <div class="card-header" role="tab" th:id="'heading' + ${iterStat.index}">
+                            <a class="collapsed" data-toggle="collapse" data-parent="#accordionEx" aria-expanded="true"
+                               th:href="'#collapse' + ${iterStat.index}" th:aria-controls="'collapse'+${iterStat.index}">
+                                <h6 class="card-title m-0 font-weight-bold" th:text="${element.getName()}">불고기</h6>
+                                <p class="card-text font-size_09rem m-0" th:text="${element.getName()} + ', ' + ${element.getOnes()} + ${element.getUnit()}">불고기, 150g</p>
+                                <i class="fas fa-angle-down rotate-icon listIcon"></i>
+                                <p class="card-text font-size_09rem m-0" th:text="'칼로리 : ' + ${T(Math).round(element.getCalorie())} + 'kcal • 탄수화물: ' + ${T(Math).round(element.getCarbohydrate())} + 'g • 지방: ' + ${T(Math).round(element.getFat())} + 'g • 단백질: ' + ${T(Math).round(element.getProtein())} + 'g'">칼로리: 52kcal • 탄수화물: 14g • 지방: 0g • 단백질: 0g</p>
                             </a>
                         </div>
-                        <!-- Card body -->
-                        <div id="collapseOne" class="collapse" role="tabpanel" aria-labelledby="headingOne">
+                        <!-- //Food name -->
+
+                        <!-- Food Description -->
+                        <div th:id="'collapse' + ${iterStat.index}" class="collapse" role="tabpanel" th:aria-labelledby="'heading'+${iterStat.index}">
                             <div class="card-body col-sm-12 col-md-12 col-lg-12 mx-auto">
                                 <div class="col-sm-6 col-md-6 col-lg-6 float-left">
                                     <h6 class="card-title text-center">영양 정보</h6>
@@ -84,7 +87,7 @@
                                                     </span>
                                                 </div>
                                                 칼로리
-                                                <span class="float-right">14g</span>
+                                                <span class="float-right" th:text="${T(Math).round(element.getCalorie())} + 'g'">14g</span>
                                             </li>
                                             <li class="list-group-item list-group-item-action font-weight-bolder dropup">
                                                 <i class="fas fa-info-circle dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
@@ -95,7 +98,7 @@
                                                     </span>
                                                 </div>
                                                 단백질
-                                                <span class="float-right">14g</span>
+                                                <span class="float-right" th:text="${T(Math).round(element.getProtein())} + 'g'">14g</span>
                                             </li>
                                             <li class="list-group-item list-group-item-action dropup">
                                                 <i class="fas fa-info-circle dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
@@ -106,7 +109,7 @@
                                                     </span>
                                                 </div>
                                                 당
-                                                <span class="float-right">14g</span>
+                                                <span class="float-right" th:text="${T(Math).round(element.getSugar())} + 'g'">14g</span>
                                             </li>
                                             <li class="list-group-item list-group-item-action dropup">
                                                 <i class="fas fa-info-circle dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
@@ -117,7 +120,7 @@
                                                     </span>
                                                 </div>
                                                 식이섬유
-                                                <span class="float-right">14g</span>
+                                                <span class="float-right" th:text="${T(Math).round(element.getDietaryFiber())} + 'g'">14g</span>
                                             </li>
                                             <li class="list-group-item list-group-item-action dropup">
                                                 <i class="fas fa-info-circle dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
@@ -128,7 +131,7 @@
                                                     </span>
                                                 </div>
                                                 마그네슘
-                                                <span class="float-right">14g</span>
+                                                <span class="float-right" th:text="${T(Math).round(element.getMagnesium())} + 'g'">14g</span>
                                             </li>
                                             <li class="list-group-item list-group-item-action dropup">
                                                 <i class="fas fa-info-circle dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
@@ -150,7 +153,7 @@
                                                     </span>
                                                 </div>
                                                 칼륨
-                                                <span class="float-right">14g</span>
+                                                <span class="float-right" th:text="${T(Math).round(element.getKalium())} + 'g'">14g</span>
                                             </li>
                                         </ul>
                                     </div>
@@ -165,7 +168,7 @@
                                                     </span>
                                                 </div>
                                                 탄수화물
-                                                <span class="float-right">14g</span>
+                                                <span class="float-right" th:text="${T(Math).round(element.getCarbohydrate())} + 'g'">14g</span>
                                             </li>
                                             <li class="list-group-item list-group-item-action font-weight-bolder dropup">
                                                 <i class="fas fa-info-circle dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
@@ -176,7 +179,7 @@
                                                     </span>
                                                 </div>
                                                 지방
-                                                <span class="float-right">14g</span>
+                                                <span class="float-right" th:text="${T(Math).round(element.getFat())} + 'g'">14g</span>
                                             </li>
                                             <li class="list-group-item list-group-item-action dropup">
                                                 <i class="fas fa-info-circle dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
@@ -187,7 +190,7 @@
                                                     </span>
                                                 </div>
                                                 콜레스테롤
-                                                <span class="float-right">14g</span>
+                                                <span class="float-right" th:text="${T(Math).round(element.getCholesterol())} + 'g'">14g</span>
                                             </li>
                                             <li class="list-group-item list-group-item-action dropup">
                                                 <i class="fas fa-info-circle dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
@@ -198,7 +201,7 @@
                                                     </span>
                                                 </div>
                                                 나트륨
-                                                <span class="float-right">14g</span>
+                                                <span class="float-right" th:text="${T(Math).round(element.getNatrium())} + 'g'">14g</span>
                                             </li>
                                             <li class="list-group-item list-group-item-action dropup">
                                                 <i class="fas fa-info-circle dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
@@ -209,7 +212,7 @@
                                                     </span>
                                                 </div>
                                                 비타민 B1
-                                                <span class="float-right">14g</span>
+                                                <span class="float-right" th:text="${T(Math).ceil(element.getVitaminB1())} + 'g'">14g</span>
                                             </li>
                                             <li class="list-group-item list-group-item-action dropup">
                                                 <i class="fas fa-info-circle dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
@@ -220,7 +223,7 @@
                                                     </span>
                                                 </div>
                                                 비타민 B2
-                                                <span class="float-right">14g</span>
+                                                <span class="float-right" th:text="${T(Math).ceil(element.getVitaminB2())} + 'g'">14g</span>
                                             </li>
                                             <li class="list-group-item list-group-item-action dropup">
                                                 <i class="fas fa-info-circle dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
@@ -231,28 +234,28 @@
                                                     </span>
                                                 </div>
                                                 비타민 C
-                                                <span class="float-right">14g</span>
+                                                <span class="float-right" th:text="${T(Math).ceil(element.getVitaminC())} + 'g'">14g</span>
                                             </li>
                                         </ul>
                                     </div>
                                 </div>
                                 <div class="col-sm-6 col-md-6 col-lg-6 float-left mb-4">
                                     <div class="col-sm-12 col-md-12 col-lg-12 text-center" style="color: black">
-                                        <h2 class="font-weight-bold">52kcal</h2>
+                                        <h2 class="font-weight-bold" th:text="${T(Math).round(element.getCalorie())} + 'kcal'">52kcal</h2>
                                         <p class="card-text">다음 운동으로 위 칼로리 소모가 가능합니다</p>
                                         <div class="col-sm-4 col-md-4 col-lg-4 float-left">
                                             <img src="/images/exercise/자전거.jpg" style="width: 100%; height: 100%;">
-                                            <span class="text-center font-weight-bold m-0 grey-text" style="font-size: 2.5rem; line-height: 1;">5</span>
+                                            <span class="text-center font-weight-bold m-0 grey-text" style="font-size: 2.5rem; line-height: 1;" th:text="${T(Math).round(element.getCalorie() / 6.93)}">5</span>
                                             <p class="card-text">분 / 자전거타기</p>
                                         </div>
                                         <div class="col-sm-4 col-md-4 col-lg-4 float-left">
                                             <img src="/images/exercise/조깅.jpg" style="width: 100%; height: 100%;">
-                                            <span class="text-center font-weight-bold m-0 grey-text" style="font-size: 2.5rem; line-height: 1;">5</span>
-                                            <p class="card-text">분 / 조깅</pm>
+                                            <span class="text-center font-weight-bold m-0 grey-text" style="font-size: 2.5rem; line-height: 1;" th:text="${T(Math).round(element.getCalorie() / 10.78)}">5</span>
+                                            <p class="card-text">분 / 조깅</p>
                                         </div>
                                         <div class="col-sm-4 col-md-4 col-lg-4 float-left">
                                             <img src="/images/exercise/줄넘기.jpg" style="width: 100%; height: 100%;">
-                                            <span class="text-center font-weight-bold m-0 grey-text" style="font-size: 2.5rem; line-height: 1;">5</span>
+                                            <span class="text-center font-weight-bold m-0 grey-text" style="font-size: 2.5rem; line-height: 1;" th:text="${T(Math).round(element.getCalorie() / 14.5)}">5</span>
                                             <p class="card-text">분 / 줄넘기</p>
                                         </div>
                                     </div>
@@ -260,229 +263,40 @@
                             </div>
                         </div>
                     </div>
-                    <!-- //Accordion card -->
 
-                    <!-- Accordion card -->
-                    <div class="card border-0">
-
-                        <div class="card-header" role="tab" id="headingTwo2">
-                            <a class="collapsed" data-toggle="collapse" data-parent="#accordionEx" href="#collapseTwo2"
-                               aria-expanded="false" aria-controls="collapseTwo2">
-                                <h5 class="mb-0" style="color: black;">
-                                    <h6 class="card-title m-0 font-weight-bold">불고기</h6>
-                                    <p class="card-text font-size_09rem m-0">불고기, 150g<i class="fas fa-angle-down rotate-icon listIcon"></i></p>
-                                    <p class="card-text font-size_09rem m-0">칼로리: 52kcal • 탄수화물: 14g • 지방: 0g • 단백질: 0g</p>
-                                </h5>
-                            </a>
-                        </div>
-
-                        <div id="collapseTwo2" class="collapse" role="tabpanel" aria-labelledby="headingTwo2">
-                            <div class="card-body col-sm-12 col-md-12 col-lg-12 mx-auto">
-                                <div class="col-sm-6 col-md-6 col-lg-6 float-left">
-                                    <h6 class="card-title text-center">영양 정보</h6>
-                                    <hr>
-                                    <div class="col-sm-6 col-md-6 col-lg-6 d-inline-block float-left">
-                                        <ul class="list-group-flush w-100 m-0 p-0 font-size_075rem">
-                                            <li class="list-group-item list-group-item-action font-weight-bolder dropup">
-                                                <i class="fas fa-info-circle dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
-                                                <div class="dropdown-menu m-0 p-0">
-                                                    <span class="dropdown-item">
-                                                        칼로리
-                                                        <a class="d-block" href="" target="_blank">링크</a>
-                                                    </span>
-                                                </div>
-                                                칼로리
-                                                <span class="float-right">14g</span>
-                                            </li>
-                                            <li class="list-group-item list-group-item-action font-weight-bolder dropup">
-                                                <i class="fas fa-info-circle dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
-                                                <div class="dropdown-menu m-0 p-0">
-                                                    <span class="dropdown-item">
-                                                        단백질
-                                                        <a class="d-block" href="" target="_blank">링크</a>
-                                                    </span>
-                                                </div>
-                                                단백질
-                                                <span class="float-right">14g</span>
-                                            </li>
-                                            <li class="list-group-item list-group-item-action dropup">
-                                                <i class="fas fa-info-circle dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
-                                                <div class="dropdown-menu m-0 p-0">
-                                                    <span class="dropdown-item">
-                                                        당
-                                                        <a class="d-block" href="" target="_blank">링크</a>
-                                                    </span>
-                                                </div>
-                                                당
-                                                <span class="float-right">14g</span>
-                                            </li>
-                                            <li class="list-group-item list-group-item-action dropup">
-                                                <i class="fas fa-info-circle dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
-                                                <div class="dropdown-menu m-0 p-0">
-                                                    <span class="dropdown-item">
-                                                        식이섬유
-                                                        <a class="d-block" href="" target="_blank">링크</a>
-                                                    </span>
-                                                </div>
-                                                식이섬유
-                                                <span class="float-right">14g</span>
-                                            </li>
-                                            <li class="list-group-item list-group-item-action dropup">
-                                                <i class="fas fa-info-circle dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
-                                                <div class="dropdown-menu m-0 p-0">
-                                                    <span class="dropdown-item">
-                                                        마그네슘
-                                                        <a class="d-block" href="" target="_blank">링크</a>
-                                                    </span>
-                                                </div>
-                                                마그네슘
-                                                <span class="float-right">14g</span>
-                                            </li>
-                                            <li class="list-group-item list-group-item-action dropup">
-                                                <i class="fas fa-info-circle dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
-                                                <div class="dropdown-menu m-0 p-0">
-                                                    <span class="dropdown-item">
-                                                        칼슘
-                                                        <a class="d-block" href="" target="_blank">링크</a>
-                                                    </span>
-                                                </div>
-                                                칼슘
-                                                <span class="float-right">14g</span>
-                                            </li>
-                                            <li class="list-group-item list-group-item-action dropup">
-                                                <i class="fas fa-info-circle dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
-                                                <div class="dropdown-menu m-0 p-0">
-                                                    <span class="dropdown-item">
-                                                        칼륨
-                                                        <a class="d-block" href="" target="_blank">링크</a>
-                                                    </span>
-                                                </div>
-                                                칼륨
-                                                <span class="float-right">14g</span>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div class="col-sm-6 col-md-6 col-lg-6 d-inline-block">
-                                        <ul class="list-group-flush w-100 m-0 p-0 font-size_075rem">
-                                            <li class="list-group-item list-group-item-action font-weight-bolder dropup">
-                                                <i class="fas fa-info-circle dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
-                                                <div class="dropdown-menu m-0 p-0">
-                                                    <span class="dropdown-item">
-                                                        탄수화물
-                                                        <a class="d-block" href="" target="_blank">링크</a>
-                                                    </span>
-                                                </div>
-                                                탄수화물
-                                                <span class="float-right">14g</span>
-                                            </li>
-                                            <li class="list-group-item list-group-item-action font-weight-bolder dropup">
-                                                <i class="fas fa-info-circle dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
-                                                <div class="dropdown-menu m-0 p-0">
-                                                    <span class="dropdown-item">
-                                                        지방
-                                                        <a class="d-block" href="" target="_blank">링크</a>
-                                                    </span>
-                                                </div>
-                                                지방
-                                                <span class="float-right">14g</span>
-                                            </li>
-                                            <li class="list-group-item list-group-item-action dropup">
-                                                <i class="fas fa-info-circle dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
-                                                <div class="dropdown-menu m-0 p-0">
-                                                    <span class="dropdown-item">
-                                                        콜레스테롤
-                                                        <a class="d-block" href="" target="_blank">링크</a>
-                                                    </span>
-                                                </div>
-                                                콜레스테롤
-                                                <span class="float-right">14g</span>
-                                            </li>
-                                            <li class="list-group-item list-group-item-action dropup">
-                                                <i class="fas fa-info-circle dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
-                                                <div class="dropdown-menu m-0 p-0">
-                                                    <span class="dropdown-item">
-                                                        나트륨
-                                                        <a class="d-block" href="" target="_blank">링크</a>
-                                                    </span>
-                                                </div>
-                                                나트륨
-                                                <span class="float-right">14g</span>
-                                            </li>
-                                            <li class="list-group-item list-group-item-action dropup">
-                                                <i class="fas fa-info-circle dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
-                                                <div class="dropdown-menu m-0 p-0">
-                                                    <span class="dropdown-item">
-                                                        비타민 B1
-                                                        <a class="d-block" href="" target="_blank">링크</a>
-                                                    </span>
-                                                </div>
-                                                비타민 B1
-                                                <span class="float-right">14g</span>
-                                            </li>
-                                            <li class="list-group-item list-group-item-action dropup">
-                                                <i class="fas fa-info-circle dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
-                                                <div class="dropdown-menu m-0 p-0">
-                                                    <span class="dropdown-item">
-                                                        비타민 B2
-                                                        <a class="d-block" href="" target="_blank">링크</a>
-                                                    </span>
-                                                </div>
-                                                비타민 B2
-                                                <span class="float-right">14g</span>
-                                            </li>
-                                            <li class="list-group-item list-group-item-action dropup">
-                                                <i class="fas fa-info-circle dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
-                                                <div class="dropdown-menu m-0 p-0">
-                                                    <span class="dropdown-item">
-                                                        비타민 C
-                                                        <a class="d-block" href="" target="_blank">링크</a>
-                                                    </span>
-                                                </div>
-                                                비타민 C
-                                                <span class="float-right">14g</span>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div class="col-sm-6 col-md-6 col-lg-6 float-left mb-4">
-                                    <div class="col-sm-12 col-md-12 col-lg-12 text-center" style="color: black">
-                                        <h2 class="font-weight-bold">52kcal</h2>
-                                        <p class="card-text">다음 운동으로 위 칼로리 소모가 가능합니다</p>
-                                        <div class="col-sm-4 col-md-4 col-lg-4 float-left">
-                                            <img src="/images/exercise/자전거.jpg" style="width: 100%; height: 100%;">
-                                            <span class="text-center font-weight-bold m-0 grey-text" style="font-size: 2.5rem; line-height: 1;">5</span>
-                                            <p class="card-text">분 / 자전거타기</p>
-                                        </div>
-                                        <div class="col-sm-4 col-md-4 col-lg-4 float-left">
-                                            <img src="/images/exercise/조깅.jpg" style="width: 100%; height: 100%;">
-                                            <span class="text-center font-weight-bold m-0 grey-text" style="font-size: 2.5rem; line-height: 1;">5</span>
-                                            <p class="card-text">분 / 조깅</pm>
-                                        </div>
-                                        <div class="col-sm-4 col-md-4 col-lg-4 float-left">
-                                            <img src="/images/exercise/줄넘기.jpg" style="width: 100%; height: 100%;">
-                                            <span class="text-center font-weight-bold m-0 grey-text" style="font-size: 2.5rem; line-height: 1;">5</span>
-                                            <p class="card-text">분 / 줄넘기</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Accordion card -->
+                    <nav aria-label="Page navigation example" th:if="${list != null}">
+                        <ul class="pagination justify-content-center mt-3" id="pagingTag"
+                            th:with="start=${(list.number / 10) * 10}, end=(${(list.totalPages == 0) ? 1 : (start + (10 - 1) < list.totalPages ? start + (10 - 1) : list.totalPages)})">
+                            <li class="page-item" th:classappend="${start > 1} ? '' : disabled">
+                                <a class="page-link" aria-label="Previous" th:href="@{/foodSearch?(page=${start-10}, search=${search})}">
+                                    <span aria-hidden="true">&laquo;</span>
+                                    <span class="sr-only">Previous</span>
+                                </a>
+                            </li>
+                            <li class="page-item" th:classappend="${page == CurPage} ? active : ''" th:each="page : ${#numbers.sequence(start, end - 1)}">
+                                <a class="page-link" th:href="@{/foodSearch?(page=${page}, search=${search})}" th:text="${page + 1}">1</a>
+                            </li>
+                            <li class="page-item" th:if="${end < list.totalPages}">
+                                <a class="page-link" th:href="@{/foodSearch?(page=${start + 10}, search=${search})}">
+                                    <span aria-hidden="true">&raquo;</span>
+                                    <span class="sr-only">Next</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row col-sm-7 col-md-7 col-lg-7 mx-auto">
+    <div class="row col-sm-7 col-md-7 col-lg-7 mx-auto mt-5">
         <h2 class="section-heading">
             음식 레시피 및 운동 루틴
         </h2>
         <div class="card-deck">
             <div class="card mb-4 mr-4">
                 <div class="view view-cascade large-view">
-                    <img class="card-img-top" src="/images/exercise/운동루틴.jpg"
-                         alt="Card image cap">
+                    <img class="card-img-top" src="/images/exercise/운동루틴.jpg" alt="Card image cap">
                     <a href="#!">
                         <div class="mask waves-effect waves-light"></div>
                     </a>

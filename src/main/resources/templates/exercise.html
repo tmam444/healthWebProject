@@ -86,6 +86,14 @@
     </style>
     <script th:inline="javascript">
 
+
+        /*<![CDATA[*/
+
+        memberId = /*[[${memberId}]]*/ '';
+
+        /*]]>*/
+
+
         exercise = {name : '', calorie : '', effect : '', videoLink : ''}
 
         function infoChange(info) {
@@ -161,7 +169,7 @@
 
         function findType(keyword, id){
             $.ajax({
-                url: `/exercise_findType?keyword=${keyword}`,
+                url: `/exercise_findType?keyword=${keyword}&memberId=${memberId}`,
                 type: "POST",
                 cache: false,
                 dataType: "json",
@@ -244,6 +252,12 @@
                     var weight = $('#weight').val();
                     var value = $(this).val()/60;
                     $('#calorie').text(Math.ceil(weight * value * exercise.calorie) + 'kcal');
+                });
+
+                $('#weight').on('keyup', function (){
+                    var weight = $('#weight').val();
+                    var value = $(this).val()/60;
+                    $('#calorie').text(Math.ceil(weight * value * exercise.calorie) + 'kcal');
                 })
             }
 
@@ -291,7 +305,7 @@
 <div class="container h-100 mb-4 h-auto" layout:fragment="content_body">
     <div class="text-center">
         <form class="form-inline d-flex justify-content-center md-form form-sm active-cyan-2 mt-4">
-            <input class="form-control form-control-sm mr-3 w-25" type="text" placeholder=""
+            <input class="form-control form-control-sm mr-3 w-25" type="text" placeholder="운동 검색"
                    aria-label="Search" id="search">
             <i class="fas fa-search" aria-hidden="true"></i>
         </form>

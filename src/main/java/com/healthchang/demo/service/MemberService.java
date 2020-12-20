@@ -50,21 +50,30 @@ public class MemberService implements UserDetailsService {
         return repository.findByEmailEndingWith(name);
     }
 
-
-    static class UserDetailImpl extends User{
-        public UserDetailImpl(MemberTable m){
-            super(m.getEmail(), m.getPassword(), m.getAuthoritySet());
-        }
-        public String getName(){
-            return this.getUsername();
-        }
-    }
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return repository.findByEmail(username)
-        .map(UserDetailImpl::new)
-        .orElseThrow(()-> new UsernameNotFoundException(username));
+                .map(UserDetailImpl::new)
+                .orElseThrow(()-> new UsernameNotFoundException(username));
+    }
+
+    public static class UserDetailImpl extends User{
+
+        private String memberName;
+
+        public UserDetailImpl(MemberTable m){
+            super(m.getEmail(), m.getPassword(), m.getAuthoritySet());
+            this.memberName = m.getName();
+        }
+
+        public String getName(){
+            return this.getUsername();
+        }
+
+        public String getMemberName(){
+            return this.memberName;
+        }
+
     }
 
 }

@@ -25,6 +25,12 @@ public interface ExerciseRepository extends JpaRepository<ExerciseCalories, Long
             "SELECT category as category, type as 'type', count(*) as count FROM exercise_calories where category = :category and type != '' group by type", nativeQuery = true)
     List<ExerciseCaloriesCategoryAndTypeDto> findGroupByTypeAndCategoryEquals(@Param("category") String category);
 
+    // 내가 추가한 운동 타입 찾기
+    @Query(value = "select category as category , '전체' as type, count(*) as count from exercise_calories where category = :category and member_id = :memberId" +
+            " union " +
+            "SELECT category as category, type as 'type', count(*) as count FROM exercise_calories where category = :category and member_id = :memberId group by type", nativeQuery = true)
+    List<ExerciseCaloriesCategoryAndTypeDto> findGroupByTypeAndCategoryEqualsAndMemberIdEquals(@Param("category") String category, @Param("memberId") String memberId);
+
 
     @Query(value = "select '전체' as type, count(*) as count from exercise_calories where category != '내가 추가한 운동'" +
             " union " +

@@ -68,6 +68,11 @@ public class ExerciseService {
     }
 
     @Transactional(readOnly = true)
+    public List<ExerciseCaloriesCategoryAndTypeDto> findGroupByTypeAndCategoryEqualsAndMemberIdEquals(String keyword, String memberId) {
+        return exerciseRepository.findGroupByTypeAndCategoryEqualsAndMemberIdEquals(keyword, memberId);
+    }
+
+    @Transactional(readOnly = true)
     public List<ExerciseCaloriesListDto> findAllListDtoByMemberIdIsNullOrMemberIdEquals(MemberTable memberTable) {
         return exerciseRepository.findAllListDtoByMemberIdIsNullOrMemberIdEquals(memberTable);
     }

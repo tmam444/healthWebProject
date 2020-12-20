@@ -78,7 +78,7 @@
                     var list_group = document.querySelector('.list-group');
 
                     data.row.forEach(element => {
-                        var li = `<li class="list-group-item" style="line-height: 43px;">${element.NM} - ${element.TYPE_NM} - ${element.ADDR} <button type="button" onclick="infoChange(${i++})" class="btn btn-sm btn-primary float-right" href="#">상세보기</button></li>`;
+                        var li = `<li class="list-group-item" style="line-height: 43px;">${element.NM} [${element.TYPE_NM}] <button type="button" onclick="infoChange(${i++})" class="btn btn-sm btn-primary float-right" href="#">상세보기</button></li>`;
                         $(list_group).append(li);
                     });
                 },

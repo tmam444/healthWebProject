@@ -33,8 +33,8 @@
                 <li class="nav-item" th:classappend="${#httpServletRequest.getRequestURI() == '/food' ? 'active':''}">
                     <a class="nav-link text-white" href="/food">음식 정보</a>
                 </li>
-                <li class="nav-item" th:classappend="${#httpServletRequest.getRequestURI() == '/#' ? 'active':''}">
-                    <a class="nav-link text-white" href="#">헬스보충제 정보</a>
+                <li class="nav-item" th:classappend="${#httpServletRequest.getRequestURI() == '/healthSupplement' ? 'active':''}">
+                    <a class="nav-link text-white" href="/healthSupplement">헬스보충제 정보</a>
                 </li>
                 <li class="nav-item" th:classappend="${#httpServletRequest.getRequestURI() == '/#' ? 'active':''}">
                     <a class="nav-link text-white" href="#">운동 루틴</a>
@@ -46,7 +46,7 @@
                     <a class="nav-link text-white" href="/search">서울 공공체육시설 검색</a>
                 </li>
 
-                <li class="nav-item avatar dropdown" sec:authorize="isAuthenticated()" style="position: absolute; right: 18%; top: 50%; transform: translateY(-50%); z-index: 100">
+                <li class="nav-item avatar dropdown" sec:authorize="isAuthenticated()" style="position: absolute; right: 18%; top: 50%; transform: translateY(-50%); z-index: 999;">
                     <a class="nav-link p-0 dropdown-toggle" href="#" id="navbarDropdownMenuLink-333"
                        data-toggle="dropdown"
                        aria-haspopup="true" aria-expanded="false">
@@ -58,12 +58,12 @@
                     <div class="dropdown-menu dropdown-menu-right dropdown-default"
                          aria-labelledby="navbarDropdownMenuLink-333">
                         <a class="dropdown-item" href="/logout">로그아웃</a>
-                        <a class="dropdown-item" href="#">마이페이지</a>
+                        <a class="dropdown-item" href="/mypage">마이페이지</a>
                         <a class="dropdown-item" href="#">다이어리</a>
                     </div>
                 </li>
 
-                <li class="nav-item" sec:authorize="isAnonymous()" style="position: absolute; right: 15%; top: 50%; transform: translateY(-50%); z-index: 100">
+                <li class="nav-item notLogin" sec:authorize="isAnonymous()" style="position: absolute; right: 15%; top: 50%; transform: translateY(-50%); z-index: 100">
                     <a class="nav-link text-white" href="/login">
                         <svg class="bi bi-lock" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor"
                              xmlns="http://www.w3.org/2000/svg">

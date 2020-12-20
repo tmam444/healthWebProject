@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <meta charset="UTF-8">
+    <title>Food Page</title>
+    <style>
+    </style>
+</head>
+<body>
+
+<div class="container h-100 mb-4 h-auto" layout:fragment="content_body">
+
+    <div class="jumbotron mt-4">
+        <h2 class="h1-responsive mb-4">프로필</h2>
+        <img th:src="@{'/images/user/' + ${#authentication.principal.name} + '.jpg'}"
+             class="rounded-circle z-depth-0 d-inline-block" alt="avatar image"
+             onerror="this.src = '/images/user/일반사용자.jpg'">
+        <h4 class="d-inline-block ml-4 article__title">
+            별명 : <span th:text="${name}"></span>
+        </h4>
+        <hr class="my-4">
+        <a class="btn btn-primary" role="button">수정</a>
+    </div>
+
+    <div class="card-deck">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">내가 먹은 음식</h5>
+                <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">내가 작성한 게시글</h5>
+                <p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
+                <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">내가 작성한 댓글</h5>
+                <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.</p>
+                <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>
